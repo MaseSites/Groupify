@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Groupify — Find your people</title>
+<meta name="description" content="Groupify is the social app for finding and organizing group events and clubs around shared interests. Discover what's happening near you — and bring your people.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://images.unsplash.com data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="theme-color" content="#16193b">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Groupify">
+<meta property="og:title" content="Groupify — Find your people">
+<meta property="og:description" content="The social app for finding and organizing group events and clubs around shared interests. Real plans, real people.">
+<meta property="og:image" content="assets/og-image.png">
+<!-- TODO beim Hosting: og:url ergänzen und og:image/twitter:image auf absolute URL umstellen -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Groupify — Find your people">
+<meta name="twitter:description" content="The social app for finding and organizing group events and clubs around shared interests.">
+<meta name="twitter:image" content="assets/og-image.png">
+<link rel="icon" type="image/png" href="Logo/groupify-mark-teal.png">
+<link rel="apple-touch-icon" href="Logo/groupify-mark-teal.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,800;1,500;1,700&family=Inter:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/theme.css">
+<link rel="stylesheet" href="styles/main.css?v=polish2-20260702">
+<link rel="stylesheet" href="styles/cinema.css?v=film-how-shot6-20260702">
+</head>
+<body>
+
+<!-- ===================== CINEMATIC INTRO =====================
+     Paper-craft world map → zoom to Zürich → pickup-game shot →
+     "Forget the feed. Find your friends." → slides away to the hero.
+     Enabled by JS (body.has-intro); skipped for reduced motion
+     and repeat visits within the same session. -->
+<div class="intro" data-intro aria-hidden="true">
+  <div class="intro__stage">
+
+    <div class="intro__world" data-intro-world aria-hidden="true">
+      <!-- real world map (assets/world.svg, Mercator) is injected here by
+           main.js, which also places the city pins from lat/lon -->
+      <p class="intro__hint">Real plans are already happening</p>
+    </div>
+
+    <div class="intro__copy" aria-hidden="true">
+      <span>Zurich · tonight</span>
+      <strong>Someone is waiting for one more player.</strong>
+    </div>
+
+    <!-- handmade cutout scene: player, friends & hoop float free on the
+         stage, grounded by a hand-drawn dashed floor line -->
+    <div class="intro__play" aria-hidden="true">
+      <span class="intro__court-note">Tuesday pickup · Zürich</span>
+      <p class="intro__play-kicker">pickup game · friends close by</p>
+      <div class="intro__court" data-intro-court aria-hidden="true">
+        <span class="intro__court-title">pickup run</span>
+        <span class="intro__court-sub">3v3 · Zürich West</span>
+        <span class="intro__court-line intro__court-line--center"></span>
+        <span class="intro__court-line intro__court-line--arc"></span>
+        <span class="intro__court-line intro__court-line--lane"></span>
+        <span class="intro__court-dot intro__court-dot--one"></span>
+        <span class="intro__court-dot intro__court-dot--two"></span>
+        <span class="intro__court-dot intro__court-dot--three"></span>
+        <span class="intro__court-chip intro__court-chip--open">open spot</span>
+        <span class="intro__court-chip intro__court-chip--time">19:30</span>
+      </div>
+      <div class="intro__shot-arc" data-intro-arc aria-hidden="true">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path class="intro__shot-arc-shadow" pathLength="1" d="M28 72 C39 34 61 18 78 35"></path>
+          <path class="intro__shot-arc-main" pathLength="1" d="M28 72 C39 34 61 18 78 35"></path>
+        </svg>
+        <span class="intro__shot-tag">phones down</span>
+      </div>
+      <div class="intro__friends" data-intro-friends>
+        <span class="intro__friend intro__friend--one"></span>
+        <span class="intro__friend intro__friend--two"></span>
+        <span class="intro__friend intro__friend--three"></span>
+        <b>we're in</b>
+      </div>
+      <div class="intro__player" data-intro-player>
+        <span class="intro__player-shadow"></span>
+        <span class="intro__player-head"></span>
+        <span class="intro__player-body"></span>
+        <span class="intro__player-arm intro__player-arm--back"></span>
+        <span class="intro__player-arm intro__player-arm--shoot" data-intro-arm>
+          <span class="intro__player-hand" data-intro-hand></span>
+        </span>
+        <span class="intro__player-arm intro__player-arm--release" data-intro-release>
+          <span class="intro__player-hand" data-intro-release-hand></span>
+        </span>
+        <span class="intro__player-leg intro__player-leg--back"></span>
+        <span class="intro__player-leg intro__player-leg--front"></span>
+        <span class="intro__player-label">one more?</span>
+      </div>
+      <div class="intro__hoop" data-intro-hoop>
+        <span class="intro__rim-target" data-intro-rim></span>
+        <span class="intro__rim-burst" data-intro-burst>
+          <span></span><span></span><span></span><span></span><span></span>
+        </span>
+        <svg viewBox="0 0 220 260" role="img" aria-label="Basketball hoop">
+          <rect class="intro__board" x="34" y="12" width="152" height="96" rx="12"></rect>
+          <rect class="intro__board-inner" x="76" y="34" width="68" height="44" rx="6"></rect>
+          <path class="intro__rim" d="M62 118c24 15 93 15 117 0"></path>
+          <path class="intro__net" data-intro-net d="M76 128l16 82 19-82 18 82 18-82 16 82M76 128h87M86 164h67"></path>
+        </svg>
+      </div>
+      <span class="intro__swish">Swish!</span>
+      <div class="intro__ball" data-intro-ball>
+        <span></span>
+      </div>
+      <span class="intro__trail-dot intro__trail-dot--one" data-intro-trail></span>
+      <span class="intro__trail-dot intro__trail-dot--two" data-intro-trail></span>
+      <span class="intro__trail-dot intro__trail-dot--three" data-intro-trail></span>
+      <span class="intro__trail-dot intro__trail-dot--four" data-intro-trail></span>
+      <div class="intro__motto" data-intro-motto>
+        <span>Forget the feed.</span>
+        <strong>Find your friends.</strong>
+      </div>
+      <p class="intro__tagline" data-intro-tagline>Groupify turns shared interests into real plans.</p>
+    </div>
+
+    <div class="intro__flash" aria-hidden="true"></div>
+    <div class="intro__confetti" data-intro-confetti aria-hidden="true"></div>
+
+    <div class="intro__title" aria-hidden="true">
+      <span class="brand__mark brand__mark--intro">
+        <img src="Logo/groupify-mark-white.png" alt="" width="56" height="56" loading="eager" decoding="async">
+      </span>
+      <h2>Find <em>your people</em></h2>
+    </div>
+
+    <button class="intro__skip" data-intro-skip type="button">Skip intro</button>
+  </div>
+</div>
+
+<!-- ===================== HEADER ===================== -->
+<header class="site-header" id="top" data-header>
+  <div class="container header-inner">
+    <a class="brand" href="index.html#hero" aria-label="Groupify home">
+      <img class="brand__logo" src="Logo/groupify-wordmark.png" alt="Groupify" width="148" height="39" loading="eager" decoding="async">
+    </a>
+    <nav class="main-nav" id="menu" aria-label="Primary">
+      <a href="#features">Features</a>
+      <a href="#categories">Categories</a>
+      <a href="#how">How it works</a>
+      <a href="#community">Community</a>
+    </nav>
+    <div class="header-actions">
+      <a href="#download" class="btn btn--primary">Get the app</a>
+      <button class="menu-toggle" data-menu-toggle aria-label="Open menu" aria-expanded="false" aria-controls="menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ===================== HERO =====================
+       The cinematic intro overlay above hands off to this hero
+       (body.intro-done triggers the staggered entrance). -->
+  <section class="hero" id="hero">
+    <div class="hero__bg" aria-hidden="true"><span class="hero__dots"></span></div>
+    <div class="container hero__inner">
+      <div class="hero__copy">
+        <span class="eyebrow eyebrow--light">Your city is making plans</span>
+        <h1 class="hero__title">
+          Find<br>
+          <span class="rotator"><em data-rotate>your people</em></span>
+        </h1>
+        <p class="hero__lead">The app that gets you off the feed and into <strong>group events</strong>, <strong>clubs</strong>, and real plans around the things you love.</p>
+        <div class="hero__cta">
+          <a class="store-btn" href="#download" aria-label="Download on the App Store">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9s-1.8-.8-3-.8c-1.5 0-2.9.9-3.7 2.3-1.6 2.7-.4 6.7 1.1 8.9.7 1.1 1.6 2.3 2.7 2.2 1.1 0 1.5-.7 2.8-.7s1.7.7 2.8.7 1.9-1.1 2.6-2.1c.8-1.2 1.2-2.4 1.2-2.4s-2.2-.9-2.2-3.4zM14.2 5.4c.6-.7 1-1.7.9-2.7-.9 0-1.9.6-2.5 1.3-.5.6-1 1.6-.9 2.6 1 .1 1.9-.5 2.5-1.2z"/></svg>
+            <span class="store-btn__txt"><small>Download on the</small><strong>App Store</strong></span>
+          </a>
+          <a class="store-btn" href="#download" aria-label="Get it on Google Play">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 3l11 9-11 9z"/></svg>
+            <span class="store-btn__txt"><small>Get it on</small><strong>Google Play</strong></span>
+          </a>
+        </div>
+        <p class="hero__note">Free to join · Made for real-life meetups</p>
+      </div>
+
+      <div class="hero__visual" aria-hidden="false">
+        <div class="phone phone--back">
+          <img src="HandyBilder/web/signup-clubs.png" alt="Groupify sign-up screen — Find your clubs" loading="eager" decoding="async">
+        </div>
+        <div class="phone phone--front">
+          <img src="HandyBilder/web/signup-people.png" alt="Groupify sign-up screen — Find your people" loading="eager" decoding="async">
+        </div>
+        <figure class="polaroid polaroid--bball" data-parallax="0.05">
+          <span class="polaroid__tape"></span>
+          <div class="polaroid__ph" style="--tint:rgba(232,100,30,.3)">
+            <img src="https://images.unsplash.com/photo-1519861531473-9200262188bf?auto=format&fit=crop&w=420&q=70" alt="Pickup basketball game" loading="eager" decoding="async">
+          </div>
+          <figcaption>Pickup game · Tuesdays</figcaption>
+        </figure>
+        <figure class="polaroid polaroid--picnic" data-parallax="0.08">
+          <span class="polaroid__tape polaroid__tape--corner"></span>
+          <div class="polaroid__ph" style="--tint:rgba(47,143,91,.28)">
+            <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=420&q=70" alt="Friends laughing together outside" loading="eager" decoding="async">
+          </div>
+          <figcaption>Sunday picnic crew</figcaption>
+        </figure>
+        <span class="sticker sticker--star" style="--rot:-12deg" aria-hidden="true">★</span>
+        <span class="sticker sticker--hand" style="--rot:8deg" aria-hidden="true">👉</span>
+      </div>
+    </div>
+    <a href="#value" class="scroll-hint" aria-hidden="true"><span></span>Scroll</a>
+  </section>
+
+  <!-- ===================== VALUE STRIP ===================== -->
+  <section class="value" id="value">
+    <div class="container value__grid" data-stagger>
+      <article class="value__item reveal" data-reveal>
+        <span class="value__ic" style="--c:var(--primary);--bg:var(--primary-soft)">
+          <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5 5-2z"/></svg>
+        </span>
+        <h3>Discover nearby</h3>
+        <p>See events and clubs happening around you on a live map of your city.</p>
+      </article>
+      <article class="value__item reveal" data-reveal>
+        <span class="value__ic" style="--c:var(--orange);--bg:var(--orange-soft)">
+          <svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M16 6a3 3 0 010 6M18.5 20c0-2-1-3.5-2.5-4.5"/></svg>
+        </span>
+        <h3>Join your people</h3>
+        <p>Book a spot, join a club, and meet people who love the same things you do.</p>
+      </article>
+      <article class="value__item reveal" data-reveal>
+        <span class="value__ic" style="--c:var(--green);--bg:var(--green-soft)">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M12 22s7-6 7-12a7 7 0 10-14 0c0 6 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        </span>
+        <h3>Meet in real life</h3>
+        <p>From pickup basketball to book clubs — turn shared interests into real plans.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== MARQUEE ===================== -->
+  <div class="marquee marquee--film" aria-hidden="true">
+    <div class="marquee__track">
+      <div class="marquee__reel">
+        <figure class="marquee__frame">
+          <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=520&q=72" alt="" loading="lazy" decoding="async">
+          <figcaption>Pickup runs</figcaption>
+        </figure>
+        <figure class="marquee__frame">
+          <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=520&q=72" alt="" loading="lazy" decoding="async">
+          <figcaption>Trail crew</figcaption>
+        </figure>
+        <figure class="marquee__frame">
+          <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=520&q=72" alt="" loading="lazy" decoding="async">
+          <figcaption>New people</figcaption>
+        </figure>
+        <figure class="marquee__frame">
+          <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=520&q=72" alt="" loading="lazy" decoding="async">
+          <figcaption>Live nights</figcaption>
+        </figure>
+        <figure class="marquee__frame">
+          <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=520&q=72" alt="" loading="lazy" decoding="async">
+          <figcaption>After plans</figcaption>
+        </figure>
+        <figure class="marquee__frame">
+          <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=520&q=72" alt="" loading="lazy" decoding="async">
+          <figcaption>Table for all</figcaption>
+        </figure>
+      </div>
+      <div class="marquee__reel">
+        <figure class="marquee__frame">
+          <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=520&q=72" alt="" loading="lazy" decoding="async">
+          <figcaption>Pickup runs</figcaption>
+        </figure>
+        <figure class="marquee__frame">
+          <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=520&q=72" alt="" loading="lazy" decoding="async">
+          <figcaption>Trail crew</figcaption>
+        </figure>
+        <figure class="marquee__frame">
+          <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=520&q=72" alt="" loading="lazy" decoding="async">
+          <figcaption>New people</figcaption>
+        </figure>
+        <figure class="marquee__frame">
+          <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=520&q=72" alt="" loading="lazy" decoding="async">
+          <figcaption>Live nights</figcaption>
+        </figure>
+        <figure class="marquee__frame">
+          <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=520&q=72" alt="" loading="lazy" decoding="async">
+          <figcaption>After plans</figcaption>
+        </figure>
+        <figure class="marquee__frame">
+          <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=520&q=72" alt="" loading="lazy" decoding="async">
+          <figcaption>Table for all</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== FEATURES ===================== -->
+  <section class="features" id="features">
+    <div class="container">
+      <header class="section-head reveal" data-reveal>
+        <span class="eyebrow">Everything in one app</span>
+        <h2 class="section-title">A whole scene, <em>in your pocket</em></h2>
+      </header>
+
+      <!-- Feature 1: Discover map -->
+      <div class="feature reveal" data-reveal>
+        <div class="feature__text">
+          <span class="pill-tag" style="--c:var(--primary);--bg:var(--primary-soft)">Discover</span>
+          <h3>Your city, on a map</h3>
+          <p>Browse a real-time map of events and clubs near you. Tap a pin to preview what's on — cooking classes, hikes, board-game nights and more.</p>
+          <ul class="ticks">
+            <li>Filter by interest, date or distance</li>
+            <li>Photo pins &amp; live previews</li>
+            <li>Save the ones you love</li>
+          </ul>
+        </div>
+        <figure class="feature__media">
+          <span class="blob" style="--c:var(--primary-soft)"></span>
+          <div class="phone reveal" data-reveal>
+            <img src="HandyBilder/web/discover-map.png" alt="Discover map of Zürich with photo event pins" loading="lazy" decoding="async">
+          </div>
+          <figure class="polaroid polaroid--bl" style="--rot:-8deg" data-parallax="0.06">
+            <span class="polaroid__tape"></span>
+            <div class="polaroid__ph" style="--tint:rgba(58,52,214,.26)">
+              <img src="https://images.unsplash.com/photo-1519677100203-a0e668c92439?auto=format&fit=crop&w=420&q=70" alt="Zürich by the lake" loading="lazy" decoding="async">
+            </div>
+            <figcaption>Somewhere in Zürich</figcaption>
+          </figure>
+        </figure>
+      </div>
+
+      <!-- Feature 2: Events -->
+      <div class="feature feature--reverse reveal" data-reveal>
+        <div class="feature__text">
+          <span class="pill-tag" style="--c:var(--orange);--bg:var(--orange-soft)">Events</span>
+          <h3>Host or join, effortlessly</h3>
+          <p>Create an event in seconds, manage guests, and approve requests. Or find the perfect thing to do this weekend and grab your spot.</p>
+          <ul class="ticks">
+            <li>One-tap RSVP &amp; guest lists</li>
+            <li>Open or approval-only events</li>
+            <li>Beautiful, colour-coded cards</li>
+          </ul>
+        </div>
+        <figure class="feature__media">
+          <span class="blob" style="--c:var(--orange-soft)"></span>
+          <div class="phone reveal" data-reveal>
+            <img src="HandyBilder/web/hosted-events.png" alt="Your hosted events — colourful event cards" loading="lazy" decoding="async">
+          </div>
+          <figure class="polaroid polaroid--br" style="--rot:7deg" data-parallax="0.07">
+            <span class="polaroid__tape"></span>
+            <div class="polaroid__ph" style="--tint:rgba(232,100,30,.3)">
+              <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=420&q=70" alt="Crowd at a small concert" loading="lazy" decoding="async">
+            </div>
+            <figcaption>Open-air night 🎶</figcaption>
+          </figure>
+        </figure>
+      </div>
+
+      <!-- Feature 3: Clubs -->
+      <div class="feature reveal" data-reveal>
+        <div class="feature__text">
+          <span class="pill-tag" style="--c:var(--green);--bg:var(--green-soft)">Clubs</span>
+          <h3>Find your community</h3>
+          <p>Join clubs built around your interests and keep the momentum going between events. Runners, readers, makers — there's a group for you.</p>
+          <ul class="ticks">
+            <li>Recommended clubs for your interests</li>
+            <li>See which friends already joined</li>
+            <li>Members, chat &amp; upcoming events</li>
+          </ul>
+        </div>
+        <figure class="feature__media">
+          <span class="blob" style="--c:var(--green-soft)"></span>
+          <div class="phone reveal" data-reveal>
+            <img src="HandyBilder/web/clubs.png" alt="Recommended clubs to join" loading="lazy" decoding="async">
+          </div>
+          <figure class="polaroid polaroid--bl" style="--rot:-7deg" data-parallax="0.06">
+            <span class="polaroid__tape"></span>
+            <div class="polaroid__ph" style="--tint:rgba(47,143,91,.3)">
+              <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=420&q=70" alt="Stacks of books at a book club" loading="lazy" decoding="async">
+            </div>
+            <figcaption>Book club, ch. 4</figcaption>
+          </figure>
+        </figure>
+      </div>
+
+      <!-- Feature 4: Feed & Chat -->
+      <div class="feature feature--reverse reveal" data-reveal>
+        <div class="feature__text">
+          <span class="pill-tag" style="--c:var(--purple);--bg:var(--purple-soft)">Feed &amp; Chat</span>
+          <h3>Stay in the loop</h3>
+          <p>A social feed for your clubs and events, plus group chats to plan the details. Share the afterglow, post photos, and never miss a moment.</p>
+          <ul class="ticks">
+            <li>Posts, photos &amp; reactions</li>
+            <li>Event, club &amp; direct messages</li>
+            <li>Notifications that actually matter</li>
+          </ul>
+        </div>
+        <figure class="feature__media">
+          <span class="blob" style="--c:var(--purple-soft)"></span>
+          <div class="phone reveal" data-reveal>
+            <img src="HandyBilder/web/social-feed.png" alt="Social feed with posts from your clubs" loading="lazy" decoding="async">
+          </div>
+          <figure class="polaroid polaroid--br" style="--rot:8deg" data-parallax="0.07">
+            <span class="polaroid__tape"></span>
+            <div class="polaroid__ph" style="--tint:rgba(106,52,214,.28)">
+              <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=420&q=70" alt="Friends laughing around a table" loading="lazy" decoding="async">
+            </div>
+            <figcaption>The after-glow ✨</figcaption>
+          </figure>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CATEGORIES ===================== -->
+  <section class="categories" id="categories">
+    <figure class="polaroid polaroid--left" data-parallax="0.05" aria-hidden="true">
+      <span class="polaroid__tape"></span>
+      <div class="polaroid__ph" style="--tint:rgba(31,167,159,.3)">
+        <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=420&q=70" alt="" loading="lazy" decoding="async">
+      </div>
+      <figcaption>Saturday hike ⛰</figcaption>
+    </figure>
+    <figure class="polaroid polaroid--right" data-parallax="0.07" aria-hidden="true">
+      <span class="polaroid__tape"></span>
+      <div class="polaroid__ph" style="--tint:rgba(242,206,27,.35)">
+        <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=420&q=70" alt="" loading="lazy" decoding="async">
+      </div>
+      <figcaption>Sunrise yoga</figcaption>
+    </figure>
+    <div class="container">
+      <header class="section-head center reveal" data-reveal>
+        <span class="eyebrow">Whatever you're into</span>
+        <h2 class="section-title">Pick your <em>interests</em></h2>
+        <p class="lead">Groupify groups people by what they love. Choose a few and your city rearranges itself around them.</p>
+      </header>
+      <ul class="chips reveal" data-reveal data-stagger>
+        <li class="chip" style="--c:var(--yellow)"><span class="chip__ic">✈️</span>Trips</li>
+        <li class="chip" style="--c:var(--purple)"><span class="chip__ic">🏃</span>Movement</li>
+        <li class="chip" style="--c:var(--red)"><span class="chip__ic">🍔</span>Food &amp; Drinks</li>
+        <li class="chip" style="--c:var(--purple)"><span class="chip__ic">🎲</span>Board games</li>
+        <li class="chip" style="--c:var(--orange)"><span class="chip__ic">✂️</span>Crafts</li>
+        <li class="chip" style="--c:#b03a63"><span class="chip__ic">🎭</span>Art &amp; Culture</li>
+        <li class="chip" style="--c:var(--royal)"><span class="chip__ic">📖</span>Literature</li>
+        <li class="chip" style="--c:var(--teal)"><span class="chip__ic">🔬</span>Science</li>
+        <li class="chip" style="--c:var(--purple)"><span class="chip__ic">🎵</span>Music</li>
+        <li class="chip" style="--c:var(--green)"><span class="chip__ic">🌿</span>Nature</li>
+        <li class="chip" style="--c:var(--orange)"><span class="chip__ic">🏀</span>Sports</li>
+        <li class="chip" style="--c:var(--teal)"><span class="chip__ic">🗣️</span>Languages</li>
+        <li class="chip" style="--c:var(--yellow)"><span class="chip__ic">💡</span>Technology</li>
+        <li class="chip" style="--c:var(--purple)"><span class="chip__ic">🐾</span>Animals</li>
+        <li class="chip" style="--c:var(--green)"><span class="chip__ic">🧘</span>Wellness</li>
+        <li class="chip chip--muted"><span class="chip__ic">＋</span>and more</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== HOW IT WORKS ===================== -->
+  <section class="how" id="how">
+    <div class="container">
+      <header class="section-head reveal" data-reveal>
+        <span class="eyebrow eyebrow--light">Get going in minutes</span>
+        <h2 class="section-title section-title--light">How Groupify <em>works</em></h2>
+      </header>
+      <div class="how__grid">
+        <ol class="steps" data-stagger>
+          <li class="step reveal" data-reveal>
+            <span class="step__num">1</span>
+            <h3>Tell us what you love</h3>
+            <p>Pick your interests during a quick, playful onboarding.</p>
+          </li>
+          <li class="step reveal" data-reveal>
+            <span class="step__num">2</span>
+            <h3>Discover &amp; join</h3>
+            <p>Explore events and clubs near you, and reserve your spot.</p>
+          </li>
+          <li class="step reveal" data-reveal>
+            <span class="step__num">3</span>
+            <h3>Show up &amp; connect</h3>
+            <p>Meet your people in real life — then keep the group going.</p>
+          </li>
+        </ol>
+        <figure class="how__phone reveal" data-reveal>
+          <img src="HandyBilder/web/home-feed.png" alt="Groupify home feed — ready for an adventure?" loading="lazy" decoding="async">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== COMMUNITY ===================== -->
+  <section class="community" id="community">
+    <div class="container community__inner">
+      <div class="community__copy reveal" data-reveal>
+        <span class="eyebrow">More than an app</span>
+        <h2 class="section-title">Real plans, <em>real people</em></h2>
+        <p class="lead">Groupify started with a simple idea: the best moments happen together, offline. Every event you join is a chance to meet someone new.</p>
+        <a href="#download" class="btn btn--primary btn--lg">Find your people</a>
+      </div>
+      <div class="community__cards reveal" data-reveal>
+        <article class="ecard c-orange">
+          <div class="ecard__ph">
+            <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=520&q=70" alt="Trail runner in the mountains at sunset" loading="lazy" decoding="async">
+          </div>
+          <div class="ecard__meta">Wed 01 Nov · 14:00</div>
+          <h3 class="ecard__title">Mountain running</h3>
+          <span class="ecard__att">👥 17 going</span>
+        </article>
+        <article class="ecard c-blue">
+          <div class="ecard__ph ecard__ph--light">
+            <img src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=520&q=70" alt="Runner warming up in the park" loading="lazy" decoding="async">
+          </div>
+          <div class="ecard__meta">Mon 15 Sep · 09:30</div>
+          <h3 class="ecard__title">Easy pace park run</h3>
+          <span class="ecard__att">👥 25 going</span>
+        </article>
+        <article class="ecard c-yellow">
+          <div class="ecard__ph">
+            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=520&q=70" alt="Shared table full of good food" loading="lazy" decoding="async">
+          </div>
+          <div class="ecard__meta">Tue 22 Oct · 13:30</div>
+          <h3 class="ecard__title">Artisanal cheese tour</h3>
+          <span class="ecard__att">👥 10/18 going</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== DOWNLOAD CTA ===================== -->
+  <section class="download" id="download">
+    <div class="container download__inner">
+      <span class="download__dots" aria-hidden="true"></span>
+      <figure class="polaroid polaroid--dl" aria-hidden="true">
+        <span class="polaroid__tape"></span>
+        <div class="polaroid__ph" style="--tint:rgba(232,100,30,.3)">
+          <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=360&q=70" alt="" loading="lazy" decoding="async">
+        </div>
+        <figcaption>See you there?</figcaption>
+      </figure>
+      <figure class="polaroid polaroid--dr" aria-hidden="true">
+        <span class="polaroid__tape"></span>
+        <div class="polaroid__ph" style="--tint:rgba(106,52,214,.3)">
+          <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=360&q=70" alt="" loading="lazy" decoding="async">
+        </div>
+        <figcaption>Your new crew</figcaption>
+      </figure>
+      <h2 class="download__title">Everybody is waiting<br>for you. <em>Are you in?</em></h2>
+      <p class="download__lead">Download Groupify and find your people this week.</p>
+      <!-- TODO beim Launch: echte App-Store-/Play-Store-URLs eintragen -->
+      <div class="hero__cta hero__cta--center">
+        <a class="store-btn" href="#download" aria-label="Download on the App Store">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9s-1.8-.8-3-.8c-1.5 0-2.9.9-3.7 2.3-1.6 2.7-.4 6.7 1.1 8.9.7 1.1 1.6 2.3 2.7 2.2 1.1 0 1.5-.7 2.8-.7s1.7.7 2.8.7 1.9-1.1 2.6-2.1c.8-1.2 1.2-2.4 1.2-2.4s-2.2-.9-2.2-3.4zM14.2 5.4c.6-.7 1-1.7.9-2.7-.9 0-1.9.6-2.5 1.3-.5.6-1 1.6-.9 2.6 1 .1 1.9-.5 2.5-1.2z"/></svg>
+          <span class="store-btn__txt"><small>Download on the</small><strong>App Store</strong></span>
+        </a>
+        <a class="store-btn" href="#download" aria-label="Get it on Google Play">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 3l11 9-11 9z"/></svg>
+          <span class="store-btn__txt"><small>Get it on</small><strong>Google Play</strong></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <a class="brand" href="index.html#hero" aria-label="Groupify home">
+        <img class="brand__logo brand__logo--footer" src="Logo/groupify-wordmark-white.png" alt="Groupify" width="148" height="39" loading="lazy" decoding="async">
+      </a>
+      <p>Find your people. Made in Switzerland 🇨🇭</p>
+    </div>
+    <nav class="footer-cols" aria-label="Footer">
+      <div>
+        <h4>Product</h4>
+        <a href="#features">Features</a>
+        <a href="#categories">Categories</a>
+        <a href="#how">How it works</a>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <a href="#community">About</a>
+        <a href="legal.html#imprint">Contact</a>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <a href="legal.html#privacy">Privacy</a>
+        <a href="legal.html#terms">Terms</a>
+        <a href="legal.html#imprint">Imprint</a>
+      </div>
+    </nav>
+  </div>
+  <div class="container footer-bottom">
+    <span>© <span data-year>2026</span> Groupify</span>
+    <span class="footer-lang">EN</span>
+  </div>
+</footer>
+
+<script src="scripts/vendor/gsap.min.js?v=3.12.5" defer></script>
+<script src="scripts/vendor/ScrollTrigger.min.js?v=3.12.5" defer></script>
+<script src="scripts/main.js?v=film-how-shot5-20260702" defer></script>
+</body>
+</html>

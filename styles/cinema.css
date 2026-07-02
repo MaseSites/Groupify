@@ -1,0 +1,441 @@
+/* ==========================================================================
+   Groupify — Cinematic intro (world map → Zürich → pickup shot → hero)
+   + collage layer: polaroid photo stickers, marquee, parallax, staggers.
+   Driven by scripts/main.js. No-JS / reduced-motion users skip straight
+   to the normal hero (intro is display:none until body.has-intro).
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1 · INTRO OVERLAY
+   -------------------------------------------------------------------------- */
+.intro{position:fixed;inset:0;z-index:1000;display:none;background:
+  linear-gradient(115deg,rgba(242,206,27,.07),transparent 28% 72%,rgba(232,100,30,.08)),
+  radial-gradient(120% 90% at 50% 42%,#20265d,#0c0e29);color:#fff;overflow:hidden}
+body.has-intro .intro{display:block}
+body.intro-lock{overflow:hidden}
+
+.intro__stage{position:absolute;inset:0;transition:transform .85s cubic-bezier(.7,0,.2,1),opacity .5s ease .3s}
+.intro.out .intro__stage{transform:translateY(-100%)}
+.intro.out{pointer-events:none;background:transparent;transition:background .6s ease}
+.intro.gsap-on .intro__world,.intro.gsap-on .intro__copy,
+.intro.gsap-on .intro__play,.intro.gsap-on .intro__motto,.intro.gsap-on .intro__tagline{transition:none}
+
+/* dotted zine grain over everything */
+.intro__stage::after{content:"";position:absolute;inset:0;z-index:6;pointer-events:none;
+  background:
+    radial-gradient(rgba(255,255,255,.5) 1px,transparent 1.5px) 0 0/7px 7px,
+    radial-gradient(120% 90% at 50% 40%,transparent 55%,rgba(6,7,22,.55));
+  mix-blend-mode:soft-light;opacity:.5}
+
+/* ---- world map (real Mercator map injected from assets/world.svg) ---- */
+.intro__world{position:absolute;inset:0;z-index:1;opacity:0;will-change:transform,opacity,filter;
+  transition:transform 1.5s cubic-bezier(.55,.02,.25,1),opacity .8s ease,filter 1.2s ease}
+.intro.act .intro__world{opacity:1}
+.intro__world svg{position:absolute;inset:0;width:100%;height:100%}
+.intro.zoom .intro__world{transform:scale(6.4)}
+.intro.scene-on .intro__world{opacity:.14;filter:blur(5px)}
+
+/* country shapes from world.svg (its own <style> sets .land — override).
+   Cream paper-cutout continents on the navy stage, matching the
+   handmade paper court of the basketball scene. */
+.intro__world .land{fill:#efe8d3 !important;stroke:rgba(20,22,58,.5) !important;
+  stroke-width:.5 !important;fill-opacity:1 !important}
+.intro__world svg{filter:drop-shadow(0 16px 34px rgba(0,0,0,.42))}
+
+/* pins pop in with a stagger once .act is set.
+   NB: the scale animation lives on the INNER group (.ppin__in) — on the
+   outer group it would compose badly with the translate() attribute and
+   slide the tag across the map instead of popping in place. */
+.mpin{opacity:0}
+.intro.act .mpin{animation:mpin-fade .5s ease forwards;animation-delay:var(--d,0s)}
+@keyframes mpin-fade{to{opacity:1}}
+.ppin__in{scale:.2;transform-box:fill-box;transform-origin:center}
+.intro.act .ppin__in{animation:mpin-pop .55s cubic-bezier(.2,1.4,.4,1) forwards;animation-delay:var(--d,0s)}
+@keyframes mpin-pop{to{scale:1}}
+.mpin__dot{fill:var(--c,#e8641e);stroke:#14163a;stroke-width:2}
+.mpin__pulse{fill:none;stroke:var(--c,#e8641e);stroke-width:2;opacity:0;
+  transform-box:fill-box;transform-origin:center}
+.intro.act .mpin__pulse{animation:mpin-pulse 2.2s ease-out infinite;animation-delay:calc(var(--d,0s) + .4s)}
+@keyframes mpin-pulse{0%{opacity:.7;scale:.5}100%{opacity:0;scale:2.4}}
+
+/* torn-paper city tags (built in main.js) */
+.ppin__shadow{fill:rgba(12,14,41,.42)}
+.ppin__paper{fill:#f6f1e7;stroke:#14163a;stroke-width:1.6;stroke-linejoin:round}
+.ppin__tape{fill:rgba(255,255,255,.72);stroke:rgba(20,22,58,.25);stroke-width:.7;stroke-dasharray:2.5 2.5}
+.ppin__leader{stroke:#14163a;stroke-width:1.8;stroke-linecap:round;stroke-dasharray:3 3}
+.ppin__name{fill:#14163a;font-family:var(--font-hand);font-size:16px;font-weight:700;text-anchor:middle}
+.mpin--zh .ppin__paper{stroke-width:2;stroke:var(--primary-strong,#2f2ab0)}
+.mpin--zh .ppin__name{font-size:20px}
+.mpin--zh .mpin__dot{fill:var(--primary)}
+
+.intro__hint{position:absolute;left:0;right:0;bottom:7%;z-index:3;text-align:center;color:#c9c8f6;
+  letter-spacing:.18em;text-transform:uppercase;font-size:.7rem;transition:opacity .4s}
+.intro.zoom .intro__hint{opacity:0}
+
+.intro__copy{position:absolute;left:clamp(1.5rem,7vw,7rem);top:clamp(6rem,14vh,9rem);z-index:4;
+  max-width:24rem;opacity:0;transform:translateY(16px);pointer-events:none}
+.intro__copy span,.intro__play-kicker{display:inline-flex;align-items:center;gap:.45em;
+  color:var(--teal);font-size:.72rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.intro__copy span::before,.intro__play-kicker::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--teal);
+  box-shadow:0 0 0 5px rgba(12,184,169,.14)}
+.intro__copy strong{display:block;margin-top:.75rem;font-family:var(--font-serif);font-size:clamp(2rem,5vw,4.6rem);
+  line-height:.95;max-width:9ch}
+
+/* ---- pickup-game shot: cutout player, friends, hoop, ball, motto ----
+   Elements float free on the navy stage, grounded by a hand-drawn
+   dashed floor line that sketches itself in. */
+.intro__play{position:absolute;inset:0;z-index:5;opacity:0;visibility:hidden;pointer-events:none}
+.intro.scene-on .intro__play{opacity:1;visibility:visible}
+.intro__play::after{content:"";position:absolute;left:7%;right:5%;bottom:clamp(6.2rem,13vh,9.3rem);height:0;
+  border-bottom:3px dashed rgba(246,241,231,.26);transform:rotate(-1.2deg);
+  transform-origin:left bottom;scale:0 1}
+.intro.scene-on .intro__play::after{animation:floor-draw .9s cubic-bezier(.3,.7,.3,1) forwards .3s}
+@keyframes floor-draw{to{scale:1 1}}
+.intro__court-note{position:absolute;left:clamp(2.4rem,9vw,11rem);bottom:clamp(3.4rem,8.5vh,6rem);z-index:3;
+  font-family:var(--font-hand);font-size:clamp(1.3rem,2.2vw,1.7rem);line-height:1;color:#f6f1e7;
+  transform:rotate(-3deg);opacity:.9;text-shadow:0 3px 10px rgba(0,0,0,.35)}
+.intro__play-kicker{position:absolute;left:clamp(1.5rem,7vw,7rem);top:clamp(6rem,14vh,9rem);opacity:0}
+.intro__court{position:absolute;left:clamp(1.6rem,5.6vw,6.4rem);bottom:clamp(6.3rem,13.4vh,9.4rem);z-index:2;
+  width:clamp(320px,36vw,560px);height:clamp(210px,24vw,330px);border-radius:15px;
+  background:
+    linear-gradient(90deg,rgba(255,255,255,.44) 0 1px,transparent 1px) 0 0/24px 24px,
+    linear-gradient(rgba(255,255,255,.35) 0 1px,transparent 1px) 0 0/24px 24px,
+    linear-gradient(145deg,#f8f2dd,#e9dfbf 54%,#d8caa3);
+  border:1.5px solid rgba(20,22,58,.34);box-shadow:0 26px 58px rgba(0,0,0,.34),inset 0 0 0 1px rgba(255,255,255,.46);
+  transform:rotate(-5deg);transform-origin:52% 65%;opacity:0;will-change:transform,opacity;overflow:hidden}
+.intro__court::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(circle at 16% 78%,rgba(31,167,159,.18),transparent 18%),
+  linear-gradient(110deg,transparent 0 54%,rgba(20,22,58,.075) 54% 55%,transparent 55%),
+  radial-gradient(rgba(20,22,58,.18) .8px,transparent 1.2px) 0 0/9px 9px;
+  mix-blend-mode:multiply;opacity:.74}
+.intro__court::after{content:"";position:absolute;right:-18%;top:20%;width:58%;aspect-ratio:1;border:3px solid rgba(58,52,214,.45);
+  border-radius:50%;box-shadow:inset 0 0 0 22px rgba(58,52,214,.055)}
+.intro.scene-on .intro__court{opacity:1}
+.intro__court-title,.intro__court-sub,.intro__court-chip{position:absolute;z-index:3;font-family:var(--font-sans);letter-spacing:.14em;text-transform:uppercase}
+.intro__court-title{left:7%;top:10%;color:#167f78;font-size:clamp(.72rem,1.1vw,.95rem);font-weight:800}
+.intro__court-sub{left:7%;bottom:10%;color:#14163a;font-size:clamp(.64rem,.95vw,.78rem);font-weight:800;opacity:.74}
+.intro__court-line{position:absolute;z-index:2;background:rgba(20,22,58,.38)}
+.intro__court-line--center{left:50%;top:0;bottom:0;width:3px;opacity:.38}
+.intro__court-line--lane{right:9%;top:31%;width:20%;height:38%;border:3px solid rgba(20,22,58,.36);border-right:0;background:transparent;border-radius:8px 0 0 8px}
+.intro__court-line--arc{right:18%;top:33%;width:31%;aspect-ratio:1;border:3px solid rgba(106,52,214,.36);border-radius:50%;background:transparent}
+.intro__court-dot{position:absolute;z-index:3;width:13px;height:13px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 5px rgba(31,167,159,.16),0 4px 0 rgba(20,22,58,.18)}
+.intro__court-dot--one{left:16%;top:58%}
+.intro__court-dot--two{left:32%;top:68%;background:var(--yellow);box-shadow:0 0 0 5px rgba(242,206,27,.18),0 4px 0 rgba(20,22,58,.18)}
+.intro__court-dot--three{left:42%;top:47%;background:var(--orange);box-shadow:0 0 0 5px rgba(232,100,30,.16),0 4px 0 rgba(20,22,58,.18)}
+.intro__court-chip{padding:.42em .7em;border-radius:7px;border:2px solid #14163a;background:#fff;color:#14163a;font-size:.68rem;font-weight:900;box-shadow:4px 5px 0 rgba(20,22,58,.18)}
+.intro__court-chip--open{left:22%;bottom:26%;background:var(--orange);color:#fff;letter-spacing:.08em;text-transform:none;font-family:var(--font-hand);font-size:1.02rem}
+.intro__court-chip--time{right:10%;bottom:12%;background:#f6f1e7}
+.intro__shot-arc{position:absolute;inset:0;z-index:1;opacity:0;visibility:hidden;pointer-events:none}
+.intro__shot-arc svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.intro__shot-arc path{fill:none;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;vector-effect:non-scaling-stroke}
+.intro__shot-arc-shadow{stroke:rgba(20,22,58,.38);stroke-width:8;filter:blur(1px)}
+.intro__shot-arc-main{stroke:#f6f1e7;stroke-width:4.5;stroke-dasharray:.035 .035;filter:drop-shadow(0 5px 10px rgba(242,206,27,.28))}
+.intro__shot-tag{position:absolute;left:54%;top:33%;padding:.28em .62em;background:#f6f1e7;color:#14163a;
+  border:2px solid #14163a;border-radius:4px;font-family:var(--font-hand);font-size:clamp(1.2rem,2vw,1.7rem);
+  transform:rotate(-8deg);box-shadow:4px 5px 0 rgba(20,22,58,.22)}
+.intro__friends{position:absolute;left:clamp(2rem,10vw,12rem);bottom:clamp(11rem,25vh,16rem);z-index:3;
+  width:150px;height:84px;opacity:0;transform-origin:50% 100%;filter:drop-shadow(0 12px 18px rgba(0,0,0,.28))}
+.intro__friend{position:absolute;width:42px;height:42px;border-radius:50%;background:#f6f1e7;border:3px solid #14163a;
+  box-shadow:inset -6px -5px 0 rgba(12,184,169,.16)}
+.intro__friend::after{content:"";position:absolute;left:14px;top:17px;width:4px;height:4px;border-radius:50%;background:#14163a;
+  box-shadow:10px 0 0 #14163a}
+.intro__friend--one{left:2px;top:16px;transform:rotate(-8deg)}
+.intro__friend--two{left:36px;top:0;background:#fff8d9;transform:rotate(7deg)}
+.intro__friend--three{left:74px;top:18px;background:#dff5ef;transform:rotate(-4deg)}
+.intro__friends b{position:absolute;right:0;bottom:0;padding:.26em .6em;background:var(--orange);color:#fff;
+  border:2px solid #14163a;border-radius:5px;font-family:var(--font-hand);font-size:1.15rem;line-height:1;
+  transform:rotate(7deg);box-shadow:4px 5px 0 rgba(20,22,58,.2)}
+.intro__player{position:absolute;left:clamp(7rem,24vw,31rem);bottom:clamp(7.6rem,18vh,12rem);
+  z-index:4;width:clamp(154px,15.8vw,220px);height:clamp(196px,20vw,282px);opacity:0;transform-origin:50% 100%;
+  will-change:transform,opacity;filter:drop-shadow(0 18px 22px rgba(0,0,0,.34))}
+.intro__player::before{content:"";position:absolute;left:9%;top:43%;width:34px;height:7px;border-radius:999px;
+  background:var(--yellow);border:2px solid #14163a;transform:rotate(-18deg);box-shadow:17px -20px 0 -1px var(--orange)}
+.intro__player-shadow{position:absolute;left:18%;bottom:-5%;width:74%;height:18%;border-radius:50%;
+  background:rgba(0,0,0,.2);filter:blur(5px)}
+.intro__player-head{position:absolute;left:45%;top:2%;width:29%;aspect-ratio:1;border-radius:50%;
+  background:#f6f1e7;border:3px solid #14163a;box-shadow:inset -7px -4px 0 rgba(12,184,169,.18)}
+.intro__player-head::after{content:"";position:absolute;right:17%;top:38%;width:5px;height:5px;border-radius:50%;background:#14163a;
+  box-shadow:-12px -1px 0 #14163a}
+.intro__player-body{position:absolute;left:34%;top:29%;width:43%;height:35%;background:var(--teal);
+  border:3px solid #14163a;border-radius:14px 18px 9px 12px;clip-path:polygon(8% 0,100% 7%,86% 100%,0 91%);
+  box-shadow:inset -11px -12px 0 rgba(20,22,58,.15),5px 6px 0 rgba(246,241,231,.16)}
+.intro__player-body::after{content:"G";position:absolute;left:50%;top:48%;transform:translate(-50%,-50%) rotate(-5deg);
+  color:#fff;font-family:var(--font-serif);font-weight:800;font-size:clamp(1.5rem,2.6vw,2rem)}
+.intro__player-arm,.intro__player-leg{position:absolute;background:#f6f1e7;border:3px solid #14163a;border-radius:999px;
+  transform-origin:50% 12%;box-shadow:inset -5px -4px 0 rgba(20,22,58,.08)}
+.intro__player-arm--back{left:25%;top:34%;width:18px;height:38%;transform:rotate(58deg)}
+.intro__player-arm--shoot{left:68%;top:22%;width:19px;height:42%;transform:rotate(-46deg);transform-origin:50% 90%}
+.intro__player-arm--release{left:67%;top:-4%;z-index:2;width:19px;height:43%;transform:rotate(-10deg);transform-origin:50% 92%;opacity:0}
+.intro__player-hand{position:absolute;left:50%;top:-14px;width:20px;height:20px;border-radius:50%;
+  background:#f6f1e7;border:3px solid #14163a;transform:translateX(-50%)}
+.intro__player-leg--back{left:37%;top:61%;width:19px;height:40%;transform:rotate(28deg)}
+.intro__player-leg--front{left:63%;top:61%;width:19px;height:45%;transform:rotate(-34deg)}
+.intro__player-label{position:absolute;left:-10%;top:14%;padding:.38em .7em;background:#f6f1e7;color:#14163a;
+  border:2px solid #14163a;border-radius:4px;font-family:var(--font-hand);font-size:1.1rem;
+  transform:rotate(-9deg);box-shadow:4px 5px 0 rgba(20,22,58,.16)}
+.intro__hoop{position:absolute;right:clamp(1.5rem,13vw,15rem);top:clamp(4.6rem,15vh,8.7rem);
+  z-index:3;width:clamp(176px,20vw,280px);aspect-ratio:220/260;filter:drop-shadow(0 24px 46px rgba(0,0,0,.38));
+  transform-origin:50% 15%;will-change:transform,opacity}
+.intro__hoop::before,.intro__hoop::after{content:"";position:absolute;z-index:3;width:64px;height:24px;background:rgba(246,241,231,.8);
+  border-left:1px dashed rgba(20,22,58,.22);border-right:1px dashed rgba(20,22,58,.22);box-shadow:0 3px 8px rgba(0,0,0,.16)}
+.intro__hoop::before{left:18%;top:3%;transform:rotate(-11deg)}
+.intro__hoop::after{right:10%;top:30%;transform:rotate(18deg)}
+.intro__hoop svg{display:block;width:100%;height:100%;overflow:visible}
+.intro__board{fill:rgba(255,255,255,.96);stroke:rgba(20,22,58,.22);stroke-width:3}
+.intro__board-inner{fill:none;stroke:rgba(58,52,214,.42);stroke-width:6}
+.intro__rim{fill:none;stroke:var(--orange);stroke-width:11;stroke-linecap:round}
+.intro__net{fill:none;stroke:#f6f1e7;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;opacity:.95;transform-origin:50% 0}
+.intro__rim-target{position:absolute;left:27%;top:43%;width:56%;height:18px;transform:translateY(-50%)}
+.intro__rim-burst{position:absolute;left:50%;top:44%;z-index:6;width:1px;height:1px;pointer-events:none}
+.intro__rim-burst span{position:absolute;left:0;top:0;width:36px;height:8px;border-radius:999px;background:var(--yellow);
+  border:2px solid #14163a;opacity:0;transform-origin:left center}
+.intro__rim-burst span:nth-child(1){transform:rotate(-52deg) translate(14px,-14px)}
+.intro__rim-burst span:nth-child(2){background:#fff;transform:rotate(-18deg) translate(22px,-4px)}
+.intro__rim-burst span:nth-child(3){background:var(--orange);transform:rotate(15deg) translate(20px,8px)}
+.intro__rim-burst span:nth-child(4){background:var(--teal);transform:rotate(45deg) translate(12px,18px)}
+.intro__rim-burst span:nth-child(5){width:18px;background:#fff;transform:rotate(95deg) translate(10px,-2px)}
+.intro__ball{position:absolute;left:clamp(9rem,32vw,38rem);bottom:clamp(16rem,37vh,23rem);
+  z-index:5;width:clamp(46px,5.6vw,72px);height:clamp(46px,5.6vw,72px);border-radius:50%;
+  background:
+    radial-gradient(circle at 34% 25%,rgba(255,255,255,.25),transparent 18%),
+    linear-gradient(135deg,#f28b24,#c64f13);
+  box-shadow:inset -9px -11px 0 rgba(80,28,8,.28),0 18px 34px rgba(0,0,0,.36);
+  opacity:0;will-change:transform,opacity}
+.intro__ball::before,.intro__ball::after,.intro__ball span::before,.intro__ball span::after{
+  content:"";position:absolute;inset:10%;border:2px solid rgba(82,31,9,.65);border-radius:50%}
+.intro__ball::before{border-left:0;border-right:0;transform:rotate(18deg)}
+.intro__ball::after{border-top:0;border-bottom:0;transform:rotate(18deg)}
+.intro__ball span::before{inset:-6% 46%;border-width:0 2px 0 0;border-radius:0;transform:rotate(-28deg)}
+.intro__ball span::after{inset:46% -6%;border-width:2px 0 0;border-radius:0;transform:rotate(-28deg)}
+.intro__trail-dot{position:absolute;left:clamp(9rem,32vw,38rem);bottom:clamp(16rem,37vh,23rem);
+  width:clamp(12px,1.5vw,20px);height:clamp(12px,1.5vw,20px);border-radius:50%;z-index:4;
+  background:rgba(242,206,27,.82);border:2px solid rgba(20,22,58,.55);opacity:0;will-change:transform,opacity}
+.intro__trail-dot--two{background:rgba(232,100,30,.86)}
+.intro__trail-dot--three{background:rgba(246,241,231,.86)}
+.intro__trail-dot--four{background:rgba(12,184,169,.82)}
+.intro__motto{position:absolute;left:50%;top:52%;width:min(760px,86vw);transform:translate(-50%,-50%);
+  text-align:center;opacity:0;visibility:hidden;text-shadow:0 14px 42px rgba(0,0,0,.35)}
+.intro__motto span,.intro__motto strong{display:block;font-family:var(--font-serif);font-size:clamp(2.9rem,8.5vw,7.2rem);
+  line-height:.92;letter-spacing:0}
+.intro__motto span{font-style:italic;color:#f6f1e7}
+.intro__motto strong{color:#fff}
+.intro__tagline{position:absolute;left:50%;top:calc(52% + clamp(8.6rem,18vw,14rem));width:min(560px,84vw);
+  transform:translateX(-50%);text-align:center;color:#c9c8f6;font-size:clamp(1rem,2vw,1.25rem);opacity:0}
+.intro.scene-on .intro__hoop,.intro.scene-on .intro__ball,.intro.scene-on .intro__play-kicker,.intro.scene-on .intro__player{opacity:1}
+.intro.swish:not(.gsap-on) .intro__ball{animation:fallback-shot 1.15s cubic-bezier(.2,.7,.2,1) forwards}
+.intro.motto-on .intro__motto{visibility:visible;animation:motto-in .72s cubic-bezier(.23,1,.32,1) forwards}
+.intro.motto-on .intro__tagline{animation:tagline-in .5s cubic-bezier(.23,1,.32,1) forwards .28s}
+@keyframes fallback-shot{45%{transform:translate(32vw,-30vh) rotate(380deg) scale(.88)}70%,100%{transform:translate(50vw,-42vh) rotate(720deg) scale(.62)}}
+@keyframes motto-in{from{opacity:0;transform:translate(-50%,calc(-50% + 22px)) scale(.96)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes tagline-in{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
+
+.intro__swish{position:absolute;top:26%;right:20%;z-index:6;font-family:var(--font-hand);
+  font-size:clamp(2.2rem,6vw,3.6rem);color:var(--yellow);transform:rotate(8deg) scale(0);
+  text-shadow:0 4px 14px rgba(0,0,0,.4)}
+.intro.swish .intro__swish{animation:swish-pop .6s cubic-bezier(.2,1.6,.4,1) forwards}
+.intro.gsap-on.swish .intro__swish{animation:none}
+@keyframes swish-pop{to{transform:rotate(-6deg) scale(1)}}
+
+/* ---- camera flash (fires when the polaroid is "taken") + confetti ---- */
+.intro__flash{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 50% 42%,#fff 0%,#6a34d6 24%,transparent 60%);mix-blend-mode:screen}
+.intro.scene-on .intro__flash{animation:flash .6s ease-out}
+@keyframes flash{0%{opacity:0}14%{opacity:1}100%{opacity:0}}
+.intro__confetti{position:absolute;inset:0;z-index:5;pointer-events:none}
+.intro__confetti i{position:absolute;left:68%;top:34%;width:12px;height:12px;border-radius:3px;background:var(--c);opacity:0}
+
+/* ---- finale title ---- */
+.intro__title{position:absolute;inset:0;z-index:5;display:grid;place-content:center;justify-items:center;
+  text-align:center;gap:.8rem;opacity:0;visibility:hidden;transform:scale(1.25);padding:2rem;
+  transition:opacity .4s ease,transform .55s cubic-bezier(.2,1.2,.4,1),visibility 0s .4s}
+.intro.title-on .intro__title{opacity:1;visibility:visible;transform:scale(1);transition-delay:0s}
+.intro.title-on .intro__play{opacity:.16;filter:blur(3px)}
+.intro__title h2{font-family:var(--font-serif);font-weight:800;font-size:clamp(2.8rem,8vw,5.4rem);color:#fff;line-height:1.02}
+.intro__title h2 em{font-weight:700}
+.intro__title .brand__mark{width:52px;height:52px;border-radius:15px}
+
+.intro__skip{position:absolute;right:clamp(1rem,3vw,2rem);bottom:clamp(1rem,3vw,2rem);z-index:7;
+  padding:.65em 1.3em;border-radius:var(--r-pill);border:1.5px solid rgba(255,255,255,.35);
+  color:#c9c8f6;font-size:.8rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  background:rgba(12,14,41,.4);backdrop-filter:blur(6px);transition:border-color .2s,color .2s}
+.intro__skip:hover{border-color:#fff;color:#fff}
+
+/* --------------------------------------------------------------------------
+   2 · HERO ENTRANCE (after intro finishes / immediately when intro skipped)
+   -------------------------------------------------------------------------- */
+.js .hero__copy > *{opacity:0}
+.js.intro-done .hero__copy > *{animation:hero-up .8s cubic-bezier(.2,.7,.2,1) forwards}
+.js.intro-done .hero__copy > *:nth-child(1){animation-delay:.05s}
+.js.intro-done .hero__copy > *:nth-child(2){animation-delay:.15s}
+.js.intro-done .hero__copy > *:nth-child(3){animation-delay:.28s}
+.js.intro-done .hero__copy > *:nth-child(4){animation-delay:.4s}
+.js.intro-done .hero__copy > *:nth-child(5){animation-delay:.5s}
+@keyframes hero-up{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+.js .hero__visual .phone,.js .hero__visual .polaroid,.js .hero__visual .sticker{opacity:0}
+.js.intro-done .hero__visual .phone{animation:hero-pop .9s cubic-bezier(.2,1.2,.35,1) forwards .25s}
+.js.intro-done .hero__visual .phone--back{animation-delay:.4s}
+.js.intro-done .hero__visual .polaroid{animation:hero-pop .8s cubic-bezier(.2,1.4,.4,1) forwards .65s}
+.js.intro-done .hero__visual .polaroid--picnic{animation-delay:.8s}
+.js.intro-done .hero__visual .sticker{animation:hero-pop .7s cubic-bezier(.2,1.5,.4,1) forwards .95s}
+/* individual transform props (scale/translate) compose with the static
+   `transform` tilts on phones & polaroids instead of overwriting them */
+@keyframes hero-pop{from{opacity:0;scale:.7;translate:0 20px}to{opacity:1;scale:1;translate:0 0}}
+@media (prefers-reduced-motion:reduce){
+  .js .hero__copy > *,.js .hero__visual .phone,.js .hero__visual .polaroid,.js .hero__visual .sticker{opacity:1;animation:none}
+}
+
+@media (max-width:760px){
+  .intro__copy{left:1.25rem;right:1.25rem;top:6rem}
+  .intro__copy strong{font-size:clamp(2rem,13vw,3.8rem)}
+  .intro__court-note{font-size:1.08rem}
+  .intro__court{left:.65rem;bottom:5.8rem;width:min(300px,72vw);height:188px;border-radius:12px}
+  .intro__court-title{left:7%;top:9%;font-size:.6rem}
+  .intro__court-sub{font-size:.56rem}
+  .intro__court-chip{font-size:.54rem}
+  .intro__court-chip--open{font-size:.85rem}
+  .intro__friends{left:1rem;bottom:10.1rem;width:112px;height:68px}
+  .intro__friend{width:33px;height:33px}
+  .intro__friend::after{left:10px;top:13px;box-shadow:8px 0 0 #14163a}
+  .intro__friends b{font-size:.95rem}
+  .intro__shot-tag{display:none}
+  .intro__player{left:2rem;bottom:10.6rem;width:136px;height:176px}
+  .intro__player-label{display:none}
+  .intro__hoop{right:.55rem;top:6.6rem;width:148px}
+  .intro__ball,.intro__trail-dot{left:7.15rem;bottom:18.5rem}
+  .intro__ball{width:48px;height:48px}
+  .intro__trail-dot{width:12px;height:12px}
+  .intro__play-kicker{display:none}
+  .intro__swish{top:21%;right:19%}
+  .intro__motto{top:48%;width:92vw}
+  .intro__tagline{top:calc(48% + 8.2rem)}
+}
+
+/* --------------------------------------------------------------------------
+   3 · POLAROID PHOTO STICKERS  (the "old photo" collage layer)
+   -------------------------------------------------------------------------- */
+.polaroid{position:relative;background:#fdfcf9;padding:9px 9px 10px;border-radius:5px;margin:0;
+  width:var(--w,180px);box-shadow:0 16px 36px rgba(20,22,58,.25);
+  transform:rotate(var(--rot,-4deg)) translateY(var(--py,0));
+  transition:transform .35s cubic-bezier(.2,.9,.3,1.2),box-shadow .35s}
+.polaroid:hover{transform:rotate(0deg) translateY(calc(var(--py,0px) - 4px)) scale(1.04);box-shadow:0 24px 48px rgba(20,22,58,.3);z-index:9}
+.polaroid__ph{position:relative;overflow:hidden;border-radius:3px;background:var(--cream)}
+.polaroid__ph img{width:100%;aspect-ratio:var(--ar,4/4.4);object-fit:cover;
+  filter:sepia(.3) saturate(.85) contrast(1.07) brightness(1.02)}
+/* duotone tint + halftone dots — the printed-zine feel */
+.polaroid__ph::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:var(--tint,rgba(58,52,214,.28));mix-blend-mode:color}
+.polaroid__ph::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background-image:radial-gradient(rgba(20,22,58,.65) .7px,transparent 1.1px);
+  background-size:4px 4px;opacity:.16;mix-blend-mode:multiply}
+.polaroid figcaption{font-family:var(--font-hand);font-size:1.15rem;line-height:1.1;
+  color:#3c3f58;text-align:center;padding-top:.45em;transform:rotate(-1deg)}
+.polaroid__tape{position:absolute;top:-11px;left:50%;z-index:3;width:76px;height:24px;
+  transform:translateX(-50%) rotate(-3deg);background:rgba(246,241,231,.82);
+  box-shadow:0 2px 5px rgba(0,0,0,.14);
+  border-left:1px dashed rgba(20,22,58,.18);border-right:1px dashed rgba(20,22,58,.18)}
+.polaroid__tape--corner{left:auto;right:-18px;top:14px;transform:rotate(45deg);width:60px}
+
+/* placement helpers */
+.hero__visual .polaroid{position:absolute;z-index:3}
+.polaroid--bball{--w:150px;--rot:-9deg;--tint:rgba(232,100,30,.3);left:-4%;top:2%}
+.polaroid--picnic{--w:140px;--rot:7deg;--tint:rgba(47,143,91,.28);right:-3%;bottom:0}
+
+.feature__media .polaroid{position:absolute;z-index:2;--w:150px}
+.feature__media .polaroid--bl{left:2%;bottom:4%}
+.feature__media .polaroid--br{right:2%;bottom:6%}
+
+.categories{position:relative;overflow:hidden}
+.categories .polaroid{position:absolute;z-index:0;--w:160px}
+.categories .polaroid--left{left:-30px;bottom:-24px;--rot:8deg}
+.categories .polaroid--right{right:-26px;top:34px;--rot:-8deg}
+.categories .container{position:relative;z-index:1}
+
+.download__inner .polaroid{position:absolute;z-index:1;--w:130px}
+.download__inner .polaroid--dl{left:4%;bottom:-18px;--rot:-8deg}
+.download__inner .polaroid--dr{right:4%;top:-14px;--rot:9deg}
+
+@media (max-width:900px){
+  .categories .polaroid,.download__inner .polaroid,.feature__media .polaroid{display:none}
+  .polaroid--bball{--w:112px;left:0}
+  .polaroid--picnic{--w:104px;right:0}
+}
+
+/* real photos inside community event cards */
+.ecard__ph{position:relative;overflow:hidden}
+.ecard__ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  filter:sepia(.25) saturate(.9) contrast(1.05)}
+.ecard__ph::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(rgba(20,22,58,.55) .7px,transparent 1.1px);
+  background-size:4px 4px;opacity:.14;mix-blend-mode:multiply}
+
+/* --------------------------------------------------------------------------
+   4 · FILMSTRIP MARQUEE
+   -------------------------------------------------------------------------- */
+.marquee{position:relative;overflow:hidden;background:#0d102c;padding-block:1.35rem;border-block:1px solid rgba(255,255,255,.11)}
+.marquee::before,.marquee::after{content:"";position:absolute;left:0;right:0;height:14px;z-index:2;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255,.88) 0 3px,transparent 3.4px) 0 50%/24px 12px repeat-x;
+  opacity:.42}
+.marquee::before{top:8px}
+.marquee::after{bottom:8px}
+.marquee__track{display:flex;width:max-content;gap:0;animation:marquee 42s linear infinite;will-change:transform}
+.marquee:hover .marquee__track{animation-play-state:paused}
+.marquee__reel{display:flex;align-items:center;gap:1rem;padding-right:1rem}
+.marquee__frame{position:relative;flex:0 0 auto;width:clamp(180px,18vw,260px);height:clamp(118px,11vw,158px);
+  margin:0;padding:10px 10px 28px;border-radius:8px;background:#f6f1e7;box-shadow:0 18px 42px rgba(0,0,0,.34);
+  transform:rotate(var(--tilt,-1deg));overflow:hidden}
+.marquee__frame:nth-child(2n){--tilt:1.4deg}
+.marquee__frame:nth-child(3n){--tilt:-2deg}
+.marquee__frame::before{content:"";position:absolute;inset:8px;border:1px solid rgba(20,22,58,.18);border-radius:5px;pointer-events:none;z-index:2}
+.marquee__frame img{width:100%;height:100%;object-fit:cover;border-radius:4px;filter:saturate(.9) contrast(1.06) brightness(.92)}
+.marquee__frame::after{content:"";position:absolute;inset:10px 10px 28px;background:
+  linear-gradient(180deg,rgba(20,22,58,0),rgba(20,22,58,.28)),
+  radial-gradient(rgba(20,22,58,.58) .7px,transparent 1.1px) 0 0/4px 4px;
+  mix-blend-mode:multiply;opacity:.38;pointer-events:none}
+.marquee__frame figcaption{position:absolute;left:14px;right:14px;bottom:8px;z-index:3;
+  font-family:var(--font-sans);font-size:.68rem;font-weight:800;letter-spacing:.13em;line-height:1;text-transform:uppercase;color:#24264d;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* --------------------------------------------------------------------------
+   5 · STAGGERED REVEALS + FLOATY STICKERS
+   -------------------------------------------------------------------------- */
+.js [data-stagger] > *{opacity:0;transform:translateY(16px) scale(.97);
+  transition:opacity .55s ease,transform .55s cubic-bezier(.2,.8,.25,1)}
+.js [data-stagger].in > *{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.js [data-stagger] > *{opacity:1;transform:none}}
+
+.sticker{transform:rotate(var(--rot,-8deg)) translateY(var(--py,0))}
+.sticker--star{animation:float-a 5s ease-in-out infinite}
+.sticker--hand{animation:float-b 6s ease-in-out infinite}
+@keyframes float-a{0%,100%{translate:0 0}50%{translate:0 -10px}}
+@keyframes float-b{0%,100%{translate:0 0}50%{translate:0 8px}}
+
+/* hand-drawn star doodle used as SVG sticker */
+.doodle{position:absolute;pointer-events:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.18))}
+
+/* --------------------------------------------------------------------------
+   6 · DEVICE MOCKUPS (HandyBilder/web — images include their own frame)
+   -------------------------------------------------------------------------- */
+.phone{background:transparent;border-radius:0;box-shadow:none;overflow:visible;
+  filter:drop-shadow(0 28px 48px rgba(10,12,35,.45))}
+.phone img{width:100%;height:auto;object-fit:contain}
+.phone--back{filter:brightness(.94) drop-shadow(0 24px 44px rgba(10,12,35,.5))}
+.features .phone,.how__phone{filter:drop-shadow(0 24px 44px rgba(20,22,58,.3))}
+
+/* "How it works": the phone stays calm while cards travel on scroll */
+.how__grid{display:grid;grid-template-columns:minmax(0,1.16fr) minmax(280px,.84fr);gap:clamp(2.4rem,6vw,5rem);align-items:start}
+.how__grid .steps{grid-template-columns:1fr;gap:1.15rem;padding-block:clamp(.5rem,4vh,2.4rem)}
+.how__grid .step{will-change:transform,opacity}
+.how__phone{position:relative;margin:0;display:flex;justify-content:center;min-height:min(620px,72vh)}
+.how__phone::before{content:"";position:absolute;inset:16% 10%;border-radius:50%;background:radial-gradient(circle,rgba(31,167,159,.2),rgba(106,52,214,.14),transparent 68%);filter:blur(18px);transform:rotate(-8deg)}
+.how__phone img{position:relative;width:min(310px,70vw);transform:rotate(4deg);transform-origin:50% 70%}
+@media (min-width:901px){
+  .how{min-height:210vh;overflow:visible}
+  .how__grid{min-height:calc(210vh - 12rem)}
+  .how__phone{position:sticky;top:clamp(5.8rem,12vh,8rem)}
+}
+@media (max-width:900px){
+  .how__grid{grid-template-columns:1fr}
+  .how__phone{position:relative;top:auto;order:-1;min-height:auto}
+  .how__phone img{width:min(240px,64vw)}
+}
