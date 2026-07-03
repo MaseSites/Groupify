@@ -558,47 +558,6 @@
         });
       });
 
-      /* memory pinboard: no scroll-scrubbing — once the board is in view
-         the photos slap onto the cork one after another (play once). Each
-         photo drops from "camera height" (big → 1) with a squash on impact,
-         then its pushpin pops in. */
-      var boardWrap = document.querySelector(".memory-board");
-      var boardCopy = document.querySelector(".memory-board__copy");
-      var boardPhotos = gsap.utils.toArray("[data-memory-photo]");
-      if (boardWrap && boardPhotos.length) {
-        gsap.set(boardCopy, { autoAlpha: 0, y: 26 });
-        gsap.set(boardPhotos, { autoAlpha: 0 });
-        gsap.set(".memory-photo__pin", { autoAlpha: 0, scale: 0.2 });
-        gsap.set(".memory-board__scribble", { autoAlpha: 0 });
-
-        var slapTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: boardWrap,
-            start: "top 58%",
-            once: true
-          }
-        });
-        slapTl.to(boardCopy, { autoAlpha: 1, y: 0, duration: 0.45, ease: "power2.out" }, 0);
-        boardPhotos.forEach(function (photo, idx) {
-          var t = 0.35 + idx * 0.34;
-          slapTl
-            .fromTo(photo,
-              { scale: 1.6, rotation: idx % 2 ? 10 : -9, transformOrigin: "50% 42%" },
-              { scale: 1, rotation: 0, duration: 0.26, ease: "power3.in" }, t)
-            .fromTo(photo, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.14, ease: "power1.out" }, t)
-            /* impact: tiny squash, then settle back */
-            .to(photo, { scale: 0.985, duration: 0.07, ease: "power1.out" }, t + 0.26)
-            .to(photo, { scale: 1, duration: 0.2, ease: "back.out(3.2)" }, t + 0.33);
-          var pin = photo.querySelector(".memory-photo__pin");
-          if (pin) {
-            slapTl.to(pin, { autoAlpha: 1, scale: 1, duration: 0.2, ease: "back.out(2.6)" }, t + 0.3);
-          }
-        });
-        slapTl.fromTo(".memory-board__scribble", { y: 14 },
-          { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" },
-          0.35 + boardPhotos.length * 0.34);
-      }
-
       /* "how it works": the phone scrolls along WITH the cards (no sticky,
          no scroll-jacking) — just a gentle parallax drift for life */
       var how = document.querySelector(".how");
