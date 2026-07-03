@@ -10,7 +10,7 @@
      Cinematic intro — world map → Zürich → basketball → swish → hero
      ================================================================== */
   var intro = document.querySelector("[data-intro]");
-  var INTRO_KEY = "gfy-intro-seen-craft-shot-v3";
+  var INTRO_KEY = "gfy-intro-seen-craft-shot-v5";
 
   function introDone() {
     root.classList.add("intro-done");
@@ -64,7 +64,9 @@
     var MAP = { url: "assets/world.svg", L: -169.6, R: 190.25, T: 83.68, B: -55.55 };
     var CITIES = [
       { n: "New York",  lat:  40.71, lon:  -74.01, c: "var(--orange)", d: ".05s" },
-      { n: "London",    lat:  51.51, lon:   -0.13, c: "var(--green)",  d: ".2s" },
+      /* London's paper tag is shifted up-left (ox/oy) so it doesn't sit
+         under Zürich's bigger tag — the dot stays on the exact city */
+      { n: "London",    lat:  51.51, lon:   -0.13, c: "var(--green)",  d: ".2s", ox: -62, oy: -42 },
       { n: "Tokyo",     lat:  35.68, lon:  139.69, c: "var(--teal)",   d: ".35s" },
       { n: "São Paulo", lat: -23.55, lon:  -46.63, c: "var(--yellow)", d: ".5s" },
       { n: "Cape Town", lat: -33.92, lon:   18.42, c: "var(--purple)", d: ".65s" },
@@ -97,6 +99,102 @@
         svg.removeAttribute("height");
         var NS = "http://www.w3.org/2000/svg";
 
+        /* comic look: gather the countries into one group and run it through
+           a hand-drawn wobble (turbulence displacement); the hard offset
+           shadow + fat ink outline come from cinema.css */
+        /* the sketch filter now also draws the comic water dressing that
+           hugs the coastlines: a hard offset sticker shadow plus two light
+           "shallow water" halo rings (dilated silhouettes) */
+        var defs = document.createElementNS(NS, "defs");
+        defs.innerHTML = '<filter id="gfy-sketch" x="-6%" y="-8%" width="112%" height="116%">' +
+          '<feTurbulence type="fractalNoise" baseFrequency="0.008 0.011" numOctaves="3" seed="7" result="n"/>' +
+          '<feDisplacementMap in="SourceGraphic" in2="n" scale="16" result="disp"/>' +
+          '<feMorphology in="disp" operator="dilate" radius="7" result="d1"/>' +
+          '<feFlood flood-color="rgba(139,148,255,0.30)" result="f1"/>' +
+          '<feComposite in="f1" in2="d1" operator="in" result="ring1"/>' +
+          '<feMorphology in="disp" operator="dilate" radius="16" result="d2"/>' +
+          '<feFlood flood-color="rgba(139,148,255,0.14)" result="f2"/>' +
+          '<feComposite in="f2" in2="d2" operator="in" result="ring2"/>' +
+          '<feOffset in="disp" dx="8" dy="10" result="off"/>' +
+          '<feFlood flood-color="rgba(12,14,41,0.55)" result="sc"/>' +
+          '<feComposite in="sc" in2="off" operator="in" result="shadow"/>' +
+          '<feMerge><feMergeNode in="ring2"/><feMergeNode in="ring1"/><feMergeNode in="shadow"/><feMergeNode in="disp"/></feMerge>' +
+          '</filter>' +
+          '<pattern id="gfy-dots" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(8)">' +
+          '<circle cx="2.5" cy="2.5" r="1.15" fill="rgba(125,135,230,0.20)"/>' +
+          '<circle cx="9.5" cy="9.5" r="1.15" fill="rgba(125,135,230,0.12)"/>' +
+          '</pattern>';
+        var landG = document.createElementNS(NS, "g");
+        landG.setAttribute("class", "gfy-lands");
+        Array.prototype.slice.call(svg.children).forEach(function (k) {
+          var t = k.tagName.toLowerCase();
+          if (t !== "style" && t !== "defs") landG.appendChild(k);
+        });
+        svg.appendChild(defs);
+
+        /* comic ocean: halftone dot water + hand-drawn scallop waves in
+           two blues, some with a shorter echo line underneath. Painted
+           behind the land cutouts so they only show on water. */
+        function frac(n) { n = Math.sin(n * 43758.5453) * 10000; return n - Math.floor(n); }
+        var ocean = el("rect", "gfy-ocean", {
+          x: bb.x, y: bb.y, width: bb.width, height: bb.height, fill: "url(#gfy-dots)"
+        });
+        svg.appendChild(ocean);
+
+        var wdA = "", wdB = "";
+        for (var wi = 0; wi < 30; wi++) {
+          var wx = bb.x + frac(wi * 0.618 + 0.07) * bb.width;
+          var wy = bb.y + frac(wi * 0.377 + 0.19) * bb.height;
+          var ws = 13 + frac(wi * 0.83 + 0.31) * 14;
+          var humps = 2 + (wi % 2);
+          var d = "M" + wx.toFixed(1) + " " + wy.toFixed(1);
+          for (var hj = 0; hj < humps; hj++) {
+            d += "q" + (ws / 2).toFixed(1) + " -" + (ws / 2.4).toFixed(1) + " " + ws.toFixed(1) + " 0";
+          }
+          if (wi % 3 === 0) {
+            d += "M" + (wx + ws * 0.55).toFixed(1) + " " + (wy + 6.5).toFixed(1) +
+              "q" + (ws / 2).toFixed(1) + " -" + (ws / 2.4).toFixed(1) + " " + ws.toFixed(1) + " 0";
+          }
+          if (wi % 2) { wdA += d; } else { wdB += d; }
+        }
+        var waves = document.createElementNS(NS, "g");
+        waves.setAttribute("class", "gfy-waves");
+        waves.appendChild(el("path", "gfy-wave gfy-wave--a", { d: wdA }));
+        waves.appendChild(el("path", "gfy-wave gfy-wave--b", { d: wdB }));
+        svg.appendChild(waves);
+        svg.appendChild(landG);
+
+        /* Switzerland = home turf: paint it red with a white cross so it
+           reads instantly, then pop small dots across the whole country
+           once the camera has zoomed in — Groupify works everywhere in CH */
+        var chPath = landG.querySelector("#CH");
+        if (chPath) chPath.setAttribute("class", "land gfy-ch");
+        var chLayer = el("g", "gfy-ch-layer", {});
+        var chC = mapPoint(46.8, 8.23);
+        chLayer.appendChild(el("path", "gfy-ch-cross", {
+          d: "M-1.05 -3.15 h2.1 v2.1 h2.1 v2.1 h-2.1 v2.1 h-2.1 v-2.1 h-2.1 v-2.1 h2.1 Z",
+          transform: "translate(" + chC.x.toFixed(1) + "," + chC.y.toFixed(1) + ")"
+        }));
+        var CH_CITIES = [
+          [46.20, 6.14],  /* Geneva     */
+          [46.52, 6.63],  /* Lausanne   */
+          [46.95, 7.45],  /* Bern       */
+          [47.56, 7.59],  /* Basel      */
+          [47.05, 8.31],  /* Lucerne    */
+          [47.42, 9.38],  /* St. Gallen */
+          [46.01, 8.96]   /* Lugano     */
+        ];
+        CH_CITIES.forEach(function (cc, ci) {
+          var cp = mapPoint(cc[0], cc[1]);
+          var dot = el("circle", "gfy-ch-city", { cx: cp.x.toFixed(1), cy: cp.y.toFixed(1), r: 1.5 });
+          dot.style.setProperty("--d", (0.95 + ci * 0.13).toFixed(2) + "s");
+          chLayer.appendChild(dot);
+        });
+        var chNote = el("text", "gfy-ch-note", { x: chC.x.toFixed(1), y: (chC.y + 9.6).toFixed(1) });
+        chNote.textContent = "all of Switzerland";
+        chLayer.appendChild(chNote);
+        svg.appendChild(chLayer);
+
         /* torn-paper city tag — same craft language as the paper court:
            jagged cream scrap, ink outline, offset shadow, tape strip,
            hand-written name, colour dot pinned on the exact city */
@@ -116,14 +214,20 @@
           for (var k in attrs) n.setAttribute(k, attrs[k]);
           return n;
         }
+        function mapPoint(lat, lon) {
+          return {
+            x: bb.x + (lon - MAP.L) / (MAP.R - MAP.L) * bb.width,
+            y: bb.y + (mercY(MAP.T) - mercY(lat)) / (mercY(MAP.T) - mercY(MAP.B)) * bb.height
+          };
+        }
 
         var layer = document.createElementNS(NS, "g");
         CITIES.forEach(function (ct, idx) {
-          var x = bb.x + (ct.lon - MAP.L) / (MAP.R - MAP.L) * bb.width;
-          var y = bb.y + (mercY(MAP.T) - mercY(ct.lat)) / (mercY(MAP.T) - mercY(MAP.B)) * bb.height;
+          var pos = mapPoint(ct.lat, ct.lon);
+          var x = pos.x, y = pos.y;
           if (ct.zh) zhPin = { x: x, y: y };
 
-          var w = ct.zh ? 96 : 80, h = ct.zh ? 30 : 24, lift = 14;
+          var w = ct.zh ? 124 : 104, h = ct.zh ? 36 : 30, lift = 14;
           var g = el("g", "mpin ppin" + (ct.zh ? " mpin--zh" : ""), {
             transform: "translate(" + x.toFixed(1) + "," + y.toFixed(1) + ")"
           });
@@ -132,23 +236,31 @@
 
           /* inner group carries the craft tilt as an SVG attribute and the
              pop animation: its local origin already sits on the city, so
-             the CSS scale pops in place instead of sliding across the map */
-          var tilt = el("g", "ppin__in", { transform: "rotate(" + ((idx % 2 ? 1 : -1) * (3 + idx % 3 * 2)) + ")" });
+             the CSS scale pops in place instead of sliding across the map.
+             Optional ox/oy shifts the whole tag away from crowded spots. */
+          var ox = ct.ox || 0, oy = ct.oy || 0;
+          var tilt = el("g", "ppin__in", {
+            transform: "translate(" + ox + "," + oy + ") rotate(" + ((idx % 2 ? 1 : -1) * (3 + idx % 3 * 2)) + ")"
+          });
 
           tilt.appendChild(el("polygon", "ppin__shadow", { points: tornPoints(w, h, idx + 1, 3, 4 - lift) }));
           tilt.appendChild(el("polygon", "ppin__paper",  { points: tornPoints(w, h, idx + 1, 0, -lift) }));
-          tilt.appendChild(el("rect", "ppin__tape", {
-            x: -13, y: (-h - lift - 5), width: 26, height: 9,
-            transform: "rotate(-7 0 " + (-h - lift) + ")"
-          }));
-          tilt.appendChild(el("line", "ppin__leader", { x1: 0, y1: -lift + 2, x2: 0, y2: -3 }));
-          var name = el("text", "ppin__name", { y: (-lift - h / 2 + (ct.zh ? 7 : 6)) });
+          /* small pushpin holding the tag to the map (comic look: ink
+             outline + hard offset shadow, head in the city colour) */
+          var pinY = -h - lift + 2;
+          tilt.appendChild(el("circle", "ppin__needle-shadow", { cx: 2.5, cy: pinY + 3, r: ct.zh ? 7 : 6 }));
+          tilt.appendChild(el("circle", "ppin__needle", { cx: 0, cy: pinY, r: ct.zh ? 7 : 6 }));
+          tilt.appendChild(el("circle", "ppin__needle-shine", { cx: -2, cy: pinY - 2, r: 1.9 }));
+          var name = el("text", "ppin__name", { y: (-lift - h / 2 + (ct.zh ? 9 : 8)) });
           name.textContent = ct.n;
           tilt.appendChild(name);
 
-          g.appendChild(el("circle", "mpin__pulse", { r: ct.zh ? 14 : 10 }));
+          /* leader lives on the outer group so it always connects the
+             (possibly offset) tag to the exact city dot */
+          g.appendChild(el("line", "ppin__leader", { x1: ox, y1: oy - lift + 4, x2: 0, y2: -3 }));
+          g.appendChild(el("circle", "mpin__pulse", { r: ct.zh ? 9 : 10 }));
           g.appendChild(tilt);
-          g.appendChild(el("circle", "mpin__dot", { r: ct.zh ? 6.5 : 5 }));
+          g.appendChild(el("circle", "mpin__dot", { r: ct.zh ? 4.2 : 5 }));
           layer.appendChild(g);
         });
         svg.appendChild(layer);
@@ -215,7 +327,6 @@
 
       var q = gsap.utils.selector(intro);
       var worldEl = q("[data-intro-world]")[0];
-      var copy = q(".intro__copy");
       var play = q(".intro__play");
       var court = q("[data-intro-court]");
       var player = q("[data-intro-player]");
@@ -232,11 +343,11 @@
       var shotArcPaths = q("[data-intro-arc] path");
       var friends = q("[data-intro-friends]");
       var rimBurst = q("[data-intro-burst] span");
-      var playKicker = q(".intro__play-kicker");
       var swish = q(".intro__swish");
       var motto = q("[data-intro-motto]");
       var tagline = q("[data-intro-tagline]");
       var title = q(".intro__title");
+      var plane = q("[data-intro-plane]");
 
       function targets() {
         var out = [];
@@ -251,8 +362,9 @@
         return out;
       }
 
-      gsap.set(targets(copy, play, court, player, hoop, ball, trailDots, shotArc, friends, releaseArm, playKicker, swish, motto, tagline, title), { autoAlpha: 0 });
+      gsap.set(targets(play, court, player, hoop, ball, trailDots, shotArc, friends, releaseArm, swish, motto, tagline, title), { autoAlpha: 0 });
       gsap.set(worldEl, { autoAlpha: 0, scale: 1, filter: "blur(0px)" });
+      gsap.set(plane, { autoAlpha: 0, x: 0, y: 0 });
       gsap.set(court, { x: -22, y: 32, rotation: -9, scale: 0.9, transformOrigin: "52% 65%" });
       gsap.set(player, { y: 34, x: -12, rotation: -9, scale: 0.88, transformOrigin: "50% 100%" });
       gsap.set(arm, { rotation: -52, transformOrigin: "50% 90%" });
@@ -282,8 +394,12 @@
       timeline
         .add(function () { intro.classList.add("act"); }, 0.05)
         .to(worldEl, { autoAlpha: 1, duration: 0.85 }, 0)
-        .fromTo(copy, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.75 }, 0.42)
-        .to(copy, { autoAlpha: 0, y: -12, duration: 0.45, ease: "power2.inOut" }, 1.8)
+        /* prop plane tows the Groupify banner across the map — constant,
+           unhurried speed; fades out once the court scene takes over */
+        .set(plane, { autoAlpha: 1 }, 0.25)
+        .to(plane, { x: function () { return window.innerWidth + 1060; }, duration: 4.8, ease: "none" }, 0.25)
+        .to(plane, { y: 14, duration: 0.95, ease: "sine.inOut", yoyo: true, repeat: 5 }, 0.25)
+        .to(plane, { autoAlpha: 0, duration: 0.5 }, 3.5)
         .add(function () { intro.classList.add("zoom"); }, 1.85)
         .to(worldEl, { scale: 6.6, duration: 1.35, ease: "expo.inOut" }, 1.85)
         .to(worldEl, { autoAlpha: 0.16, filter: "blur(5px)", duration: 0.68, ease: "power2.out" }, 3.0)
@@ -293,7 +409,6 @@
         .to(hoop, { autoAlpha: 1, y: 0, rotation: 0, duration: 0.62, ease: "back.out(1.08)" }, 3.25)
         .to(player, { autoAlpha: 1, x: 0, y: 0, rotation: -2, scale: 1, duration: 0.6, ease: "back.out(1.28)" }, 3.2)
         .fromTo(friends, { autoAlpha: 0, y: 16, rotation: -7, scale: 0.82 }, { autoAlpha: 1, y: 0, rotation: -2, scale: 1, duration: 0.48, ease: "back.out(1.35)" }, 3.34)
-        .fromTo(playKicker, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.45 }, 3.36)
         .to(releaseArm, { autoAlpha: 1, rotation: -10, duration: 0.16, ease: "power2.out" }, 3.74)
         .to(arm, { autoAlpha: 0.2, duration: 0.16, ease: "power2.out" }, 3.74)
         .to(ball, { autoAlpha: 1, scale: 0.9, duration: 0.26, ease: "back.out(1.3)" }, 3.82)
@@ -327,9 +442,12 @@
         .to(rimBurst, { autoAlpha: 1, scaleX: 1, duration: 0.14, ease: "power2.out", stagger: 0.025 }, 5.4)
         .to(rimBurst, { autoAlpha: 0, scaleX: 0.25, duration: 0.32, ease: "power2.out", stagger: 0.02 }, 5.6)
         .to(swish, { autoAlpha: 1, scale: 1, rotation: -6, duration: 0.45, ease: "back.out(1.8)" }, 5.45)
-        .to(targets(court, player, friends, hoop, ball, trailDots, shotArc, releaseArm, swish, playKicker), { autoAlpha: 0.12, filter: "blur(3px)", duration: 0.55, ease: "power2.out" }, 5.82)
+        .to(targets(court, player, friends, hoop, ball, trailDots, shotArc, releaseArm, swish), { autoAlpha: 0.12, filter: "blur(3px)", duration: 0.55, ease: "power2.out" }, 5.82)
         .fromTo(motto, { autoAlpha: 0, y: 22, scale: 0.96 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.72, ease: "power3.out" }, 5.82)
-        .fromTo(tagline, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 6.16);
+        .fromTo(tagline, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 6.16)
+        /* clean handoff: the motto lifts out first, then the stage curtain
+           slides up (finish) while the header drops in over the hero */
+        .to(targets(motto, tagline), { autoAlpha: 0, y: -30, duration: 0.5, ease: "power2.in" }, 7.15);
 
       trailDots.forEach(function (dot, idx) {
         var progress = 0.24 + idx * 0.13;
@@ -356,7 +474,7 @@
       var m = /introfreeze=([\d.]+)/.exec(location.hash);
       if (m) { timeline.seek(parseFloat(m[1]), false).pause(); return true; }
 
-      at(7600, finish);
+      at(7700, finish);
 
       return true;
     }
@@ -411,39 +529,63 @@
         });
       });
 
+      /* memory pinboard: no scroll-scrubbing — once the board is in view
+         the photos slap onto the cork one after another (play once). Each
+         photo drops from "camera height" (big → 1) with a squash on impact,
+         then its pushpin pops in. */
+      var boardWrap = document.querySelector(".memory-board");
+      var boardCopy = document.querySelector(".memory-board__copy");
+      var boardPhotos = gsap.utils.toArray("[data-memory-photo]");
+      if (boardWrap && boardPhotos.length) {
+        gsap.set(boardCopy, { autoAlpha: 0, y: 26 });
+        gsap.set(boardPhotos, { autoAlpha: 0 });
+        gsap.set(".memory-photo__pin", { autoAlpha: 0, scale: 0.2 });
+        gsap.set(".memory-board__scribble", { autoAlpha: 0 });
+
+        var slapTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: boardWrap,
+            start: "top 58%",
+            once: true
+          }
+        });
+        slapTl.to(boardCopy, { autoAlpha: 1, y: 0, duration: 0.45, ease: "power2.out" }, 0);
+        boardPhotos.forEach(function (photo, idx) {
+          var t = 0.35 + idx * 0.34;
+          slapTl
+            .fromTo(photo,
+              { scale: 1.6, rotation: idx % 2 ? 10 : -9, transformOrigin: "50% 42%" },
+              { scale: 1, rotation: 0, duration: 0.26, ease: "power3.in" }, t)
+            .fromTo(photo, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.14, ease: "power1.out" }, t)
+            /* impact: tiny squash, then settle back */
+            .to(photo, { scale: 0.985, duration: 0.07, ease: "power1.out" }, t + 0.26)
+            .to(photo, { scale: 1, duration: 0.2, ease: "back.out(3.2)" }, t + 0.33);
+          var pin = photo.querySelector(".memory-photo__pin");
+          if (pin) {
+            slapTl.to(pin, { autoAlpha: 1, scale: 1, duration: 0.2, ease: "back.out(2.6)" }, t + 0.3);
+          }
+        });
+        slapTl.fromTo(".memory-board__scribble", { y: 14 },
+          { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" },
+          0.35 + boardPhotos.length * 0.34);
+      }
+
+      /* "how it works": the phone scrolls along WITH the cards (no sticky,
+         no scroll-jacking) — just a gentle parallax drift for life */
       var how = document.querySelector(".how");
-      var howSteps = gsap.utils.toArray(".how .step");
-      var howPhone = document.querySelector(".how__phone img");
-      if (how && howSteps.length && howPhone) {
-        gsap.set(howSteps, { willChange: "transform,opacity" });
-        gsap.timeline({
+      var howPhone = document.querySelector(".how__phone");
+      if (how && howPhone) {
+        gsap.fromTo(howPhone, { y: 46 }, {
+          y: -34,
+          ease: "none",
           scrollTrigger: {
             trigger: how,
-            start: "top top",
-            end: "bottom bottom",
-            scrub: 0.8,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 0.7,
             invalidateOnRefresh: true
           }
-        })
-          .fromTo(howSteps, {
-            y: function (i) { return 94 + i * 48; },
-            opacity: function (i) { return i === 0 ? 0.92 : 0.58; },
-            scale: function (i) { return 0.94 + i * 0.015; }
-          }, {
-            y: function (i) { return -46 - i * 28; },
-            opacity: 1,
-            scale: 1,
-            stagger: 0.08,
-            ease: "none"
-          }, 0)
-          .fromTo(howPhone, {
-            rotation: 4,
-            scale: 0.98
-          }, {
-            rotation: 0,
-            scale: 1.045,
-            ease: "none"
-          }, 0);
+        });
       }
     });
   }
