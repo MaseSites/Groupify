@@ -10,7 +10,7 @@
      Cinematic intro — world map → Zürich → basketball → swish → hero
      ================================================================== */
   var intro = document.querySelector("[data-intro]");
-  var INTRO_KEY = "gfy-intro-seen-craft-shot-v5";
+  var INTRO_KEY = "gfy-intro-seen-craft-shot-v6";
 
   function introDone() {
     root.classList.add("intro-done");
@@ -28,10 +28,15 @@
     if (intro) intro.remove();
     introDone();
   } else {
-    runIntro();
+    /* if the intro bootstrap itself throws (a browser quirk, a missing
+       API), don't leave the page stuck behind the curtain — drop the
+       overlay and hand straight off to the site */
+    try { runIntro(); } catch (e) { if (intro) intro.remove(); introDone(); }
   }
 
-  setupGsapScroll();
+  /* scroll polish is a nice-to-have; a ScrollTrigger hiccup on some
+     browser must never take the rest of the page down with it */
+  try { setupGsapScroll(); } catch (e) { /* no parallax, page still fine */ }
 
   function runIntro() {
     var timers = [];
@@ -41,6 +46,13 @@
     window.scrollTo(0, 0);
 
     function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
+
+    /* hard safety net: older Safari, in-app webviews (Instagram/LinkedIn)
+       or a GSAP/SVG hiccup can throw or stall inside the timeline below.
+       Never leave the curtain covering the page — force the handoff after
+       a max runtime no matter what. (Skipped for the #introfreeze dev tool
+       and cleared by finish() on the normal path.) */
+    if (!/introfreeze=/.test(location.hash)) at(12500, finish);
 
     function finish() {
       if (finished) return;
@@ -63,15 +75,15 @@
     var world = intro.querySelector("[data-intro-world]");
     var MAP = { url: "assets/world.svg", L: -169.6, R: 190.25, T: 83.68, B: -55.55 };
     var CITIES = [
-      { n: "New York",  lat:  40.71, lon:  -74.01, c: "var(--orange)", d: ".05s" },
+      { n: "New York",  id: "new-york",  lat:  40.71, lon:  -74.01, c: "var(--orange)", d: ".05s" },
       /* London's paper tag is shifted up-left (ox/oy) so it doesn't sit
          under Zürich's bigger tag — the dot stays on the exact city */
-      { n: "London",    lat:  51.51, lon:   -0.13, c: "var(--green)",  d: ".2s", ox: -62, oy: -42 },
-      { n: "Tokyo",     lat:  35.68, lon:  139.69, c: "var(--teal)",   d: ".35s" },
-      { n: "São Paulo", lat: -23.55, lon:  -46.63, c: "var(--yellow)", d: ".5s" },
-      { n: "Cape Town", lat: -33.92, lon:   18.42, c: "var(--purple)", d: ".65s" },
-      { n: "Sydney",    lat: -33.87, lon:  151.21, c: "var(--red)",    d: ".8s" },
-      { n: "Zürich",    lat:  47.37, lon:    8.54, c: "var(--primary)", d: "1s", zh: true }
+      { n: "London",    id: "london",    lat:  51.51, lon:   -0.13, c: "var(--green)",  d: ".2s", ox: -24, oy: -34 },
+      { n: "Tokyo",     id: "tokyo",     lat:  35.68, lon:  139.69, c: "var(--teal)",   d: ".35s" },
+      { n: "São Paulo", id: "sao-paulo", lat: -23.55, lon:  -46.63, c: "var(--yellow)", d: ".5s" },
+      { n: "Cape Town", id: "cape-town", lat: -33.92, lon:   18.42, c: "var(--purple)", d: ".65s" },
+      { n: "Sydney",    id: "sydney",    lat: -33.87, lon:  151.21, c: "var(--red)",    d: ".8s" },
+      { n: "Zürich",    id: "zurich",    lat:  47.37, lon:    8.54, c: "var(--primary)", d: "1s", zh: true, ox: 30, oy: -16 }
     ];
     function mercY(lat) { return Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360)); }
 
@@ -164,36 +176,12 @@
         svg.appendChild(waves);
         svg.appendChild(landG);
 
-        /* Switzerland = home turf: paint it red with a white cross so it
-           reads instantly, then pop small dots across the whole country
-           once the camera has zoomed in — Groupify works everywhere in CH */
+        /* Switzerland = home turf: just paint it red so it reads instantly
+           as the place the camera is diving toward. (The old white cross,
+           city dots and "all of Switzerland" note only cluttered the zoom
+           and are gone.) */
         var chPath = landG.querySelector("#CH");
         if (chPath) chPath.setAttribute("class", "land gfy-ch");
-        var chLayer = el("g", "gfy-ch-layer", {});
-        var chC = mapPoint(46.8, 8.23);
-        chLayer.appendChild(el("path", "gfy-ch-cross", {
-          d: "M-1.05 -3.15 h2.1 v2.1 h2.1 v2.1 h-2.1 v2.1 h-2.1 v-2.1 h-2.1 v-2.1 h2.1 Z",
-          transform: "translate(" + chC.x.toFixed(1) + "," + chC.y.toFixed(1) + ")"
-        }));
-        var CH_CITIES = [
-          [46.20, 6.14],  /* Geneva     */
-          [46.52, 6.63],  /* Lausanne   */
-          [46.95, 7.45],  /* Bern       */
-          [47.56, 7.59],  /* Basel      */
-          [47.05, 8.31],  /* Lucerne    */
-          [47.42, 9.38],  /* St. Gallen */
-          [46.01, 8.96]   /* Lugano     */
-        ];
-        CH_CITIES.forEach(function (cc, ci) {
-          var cp = mapPoint(cc[0], cc[1]);
-          var dot = el("circle", "gfy-ch-city", { cx: cp.x.toFixed(1), cy: cp.y.toFixed(1), r: 1.5 });
-          dot.style.setProperty("--d", (0.95 + ci * 0.13).toFixed(2) + "s");
-          chLayer.appendChild(dot);
-        });
-        var chNote = el("text", "gfy-ch-note", { x: chC.x.toFixed(1), y: (chC.y + 9.6).toFixed(1) });
-        chNote.textContent = "all of Switzerland";
-        chLayer.appendChild(chNote);
-        svg.appendChild(chLayer);
 
         /* torn-paper city tag — same craft language as the paper court:
            jagged cream scrap, ink outline, offset shadow, tape strip,
@@ -227,8 +215,8 @@
           var x = pos.x, y = pos.y;
           if (ct.zh) zhPin = { x: x, y: y };
 
-          var w = ct.zh ? 124 : 104, h = ct.zh ? 36 : 30, lift = 14;
-          var g = el("g", "mpin ppin" + (ct.zh ? " mpin--zh" : ""), {
+          var w = ct.zh ? 128 : 92, h = ct.zh ? 38 : 28, lift = 14;
+          var g = el("g", "mpin ppin mpin--" + ct.id + (ct.zh ? " mpin--zh" : ""), {
             transform: "translate(" + x.toFixed(1) + "," + y.toFixed(1) + ")"
           });
           g.style.setProperty("--c", ct.c);
@@ -394,15 +382,16 @@
       timeline
         .add(function () { intro.classList.add("act"); }, 0.05)
         .to(worldEl, { autoAlpha: 1, duration: 0.85 }, 0)
-        /* prop plane tows the Groupify banner across the map — constant,
-           unhurried speed; fades out once the court scene takes over */
-        .set(plane, { autoAlpha: 1 }, 0.25)
-        .to(plane, { x: function () { return window.innerWidth + 1060; }, duration: 4.8, ease: "none" }, 0.25)
-        .to(plane, { y: 14, duration: 0.95, ease: "sine.inOut", yoyo: true, repeat: 5 }, 0.25)
-        .to(plane, { autoAlpha: 0, duration: 0.5 }, 3.5)
-        .add(function () { intro.classList.add("zoom"); }, 1.85)
-        .to(worldEl, { scale: 6.6, duration: 1.35, ease: "expo.inOut" }, 1.85)
-        .to(worldEl, { autoAlpha: 0.16, filter: "blur(5px)", duration: 0.68, ease: "power2.out" }, 3.0)
+        /* prop plane tows the Groupify banner across the map, then clears
+           before the camera dives into Zürich so it never clips or covers
+           the zoom target */
+        .set(plane, { autoAlpha: 1 }, 0.18)
+        .to(plane, { x: function () { return window.innerWidth + (window.innerWidth < 760 ? 340 : 760); }, duration: 3.15, ease: "none" }, 0.18)
+        .to(plane, { y: 12, duration: 0.72, ease: "sine.inOut", yoyo: true, repeat: 4 }, 0.18)
+        .to(plane, { autoAlpha: 0, duration: 0.32, ease: "power2.out" }, 1.78)
+        .add(function () { intro.classList.add("zoom"); }, 2.12)
+        .to(worldEl, { scale: 6.25, duration: 1.55, ease: "power3.inOut" }, 2.12)
+        .to(worldEl, { autoAlpha: 0.16, filter: "blur(5px)", duration: 0.74, ease: "power2.out" }, 3.18)
         .add(function () { intro.classList.add("scene-on"); }, 3.0)
         .set(play, { autoAlpha: 1 }, 3.2)
         .to(court, { autoAlpha: 1, x: 0, y: 0, rotation: -5, scale: 1, duration: 0.64, ease: "power3.out" }, 3.06)
@@ -479,7 +468,47 @@
       return true;
     }
 
-    if (!playGsapIntro()) playFallbackIntro();
+    /* ---- cold-open: a self-aware wink before the world map ----
+       three big serif beats fade through on their own, then the hook
+       dissolves as the cinematic map intro takes over. Pure auto-play,
+       no clicks. If GSAP or the markup is missing it just hands straight
+       to `next` so the map intro still runs. */
+    function playColdOpen(next) {
+      var g = window.gsap;
+      var hook = intro.querySelector("[data-intro-hook]");
+      if (!g || !hook) { next(); return; }
+      intro.classList.add("gsap-on");
+      var lines = hook.querySelectorAll(".intro__hook-line");
+      var l1 = lines[0], l2 = lines[1], l3 = lines[2];
+      g.set(hook, { autoAlpha: 1 });
+      g.set([l1, l2, l3], { autoAlpha: 0, y: 22 });
+      timeline = g.timeline({ defaults: { ease: "power3.out" }, onComplete: next });
+      timeline
+        .to(l1, { autoAlpha: 1, y: 0, duration: 0.5 }, 0.2)
+        .to(l1, { autoAlpha: 0, y: -18, duration: 0.3, ease: "power2.in" }, 1.15)
+        .fromTo(l2, { autoAlpha: 0, y: 22, scale: 0.94 },
+                    { autoAlpha: 1, y: 0, scale: 1, duration: 0.46, ease: "back.out(1.7)" }, 1.3)
+        .to(l2, { autoAlpha: 0, y: -18, duration: 0.3, ease: "power2.in" }, 2.05)
+        .fromTo(l3, { autoAlpha: 0, y: 22 }, { autoAlpha: 1, y: 0, duration: 0.52 }, 2.2)
+        .to(hook, { autoAlpha: 0, duration: 0.5, ease: "power2.inOut" }, 3.2);
+    }
+
+    /* run order: cold-open hook → cinematic map intro. A throw anywhere
+       still lands on finish(); #introfreeze skips the hook so the dev tool
+       keeps targeting the map timeline as before. */
+    var freezing = /introfreeze=/.test(location.hash);
+    try {
+      if (window.gsap && !freezing) {
+        playColdOpen(function () {
+          if (finished) return;
+          if (!playGsapIntro()) playFallbackIntro();
+        });
+      } else if (!playGsapIntro()) {
+        playFallbackIntro();
+      }
+    } catch (e) {
+      finish();
+    }
   }
 
   function setupGsapScroll() {

@@ -16,7 +16,7 @@
 /* header carries its own white so the bar slides in WITH the drop
    animation (the hero is pulled up underneath via negative margin) */
 .site-header{position:sticky;top:0;z-index:100;background:var(--paper);transition:background .3s ease,box-shadow .3s ease,border-color .3s}
-.site-header.scrolled{background:rgba(255,255,255,.82);backdrop-filter:saturate(180%) blur(14px);box-shadow:0 1px 0 var(--line)}
+.site-header.scrolled{background:rgba(255,255,255,.82);-webkit-backdrop-filter:saturate(180%) blur(14px);backdrop-filter:saturate(180%) blur(14px);box-shadow:0 1px 0 var(--line)}
 .header-inner{display:flex;align-items:center;justify-content:space-between;gap:clamp(1rem,2vw,2rem);height:74px}
 .brand{display:inline-flex;align-items:center;flex:0 0 auto;font-weight:700;line-height:1}
 .brand__logo{display:block;width:148px;max-width:148px;height:auto;max-height:46px;object-fit:contain}
@@ -161,7 +161,7 @@
 .how::before{content:"";position:absolute;inset:0;z-index:-1;background:
   radial-gradient(72% 58% at 96% 8%,rgba(106,52,214,.34),transparent 62%),
   radial-gradient(50% 50% at 16% 82%,rgba(31,167,159,.16),transparent 70%)}
-.how::after{content:"";position:absolute;inset:0;z-index:-1;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(to bottom,transparent,black 16%,black 82%,transparent);opacity:.7}
+.how::after{content:"";position:absolute;inset:0;z-index:-1;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:linear-gradient(to bottom,transparent,black 16%,black 82%,transparent);mask-image:linear-gradient(to bottom,transparent,black 16%,black 82%,transparent);opacity:.7}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;counter-reset:step;list-style:none;margin:0;padding:0}
 .step{--rot:0deg;position:relative;overflow:visible;background:#fbf4df;border:2px solid rgba(20,22,58,.88);
   border-radius:8px;padding:2.1rem 1.55rem 1.5rem;box-shadow:8px 10px 0 rgba(0,0,0,.2),0 22px 52px rgba(5,7,28,.28);

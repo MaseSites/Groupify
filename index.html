@@ -24,18 +24,27 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,800;1,500;1,700&family=Inter:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles/theme.css">
-<link rel="stylesheet" href="styles/main.css?v=pin-no-stitches-20260703">
-<link rel="stylesheet" href="styles/cinema.css?v=pin-no-stitches-20260703">
+<link rel="stylesheet" href="styles/main.css?v=map-safe-20260703">
+<link rel="stylesheet" href="styles/cinema.css?v=map-safe-20260703">
 </head>
 <body>
 
 <!-- ===================== CINEMATIC INTRO =====================
-     Paper-craft world map → zoom to Zürich → pickup-game shot →
-     "Forget the feed. Find your friends." → slides away to the hero.
+     "Put your phone down… or don't." cold-open (auto-play) → paper-craft
+     world map → zoom to Zürich → pickup-game shot → "Show up. Find your
+     friends." → slides away to the hero.
      Enabled by JS (body.has-intro); skipped for reduced motion
      and repeat visits within the same session. -->
 <div class="intro" data-intro aria-hidden="true">
   <div class="intro__stage">
+
+    <!-- cold-open: a self-aware wink that auto-plays, then hands off to the
+         world map (three beats, driven by main.js / playColdOpen) -->
+    <div class="intro__hook" data-intro-hook aria-hidden="true">
+      <p class="intro__hook-line" data-hook="1">Put your phone down.</p>
+      <p class="intro__hook-line intro__hook-line--wink" data-hook="2">…or don't.</p>
+      <p class="intro__hook-line intro__hook-line--cta" data-hook="3">At least download <em>Groupify</em>.</p>
+    </div>
 
     <div class="intro__world" data-intro-world aria-hidden="true">
       <!-- real world map (assets/world.svg, Mercator) is injected here by
@@ -80,8 +89,8 @@
       </div>
       <div class="intro__shot-arc" data-intro-arc aria-hidden="true">
         <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-          <path class="intro__shot-arc-shadow" pathLength="1" d="M28 72 C39 34 61 18 78 35"></path>
-          <path class="intro__shot-arc-main" pathLength="1" d="M28 72 C39 34 61 18 78 35"></path>
+          <path class="intro__shot-arc-shadow" pathLength="1" d="M32 56 C42 26 61 18 78 35"></path>
+          <path class="intro__shot-arc-main" pathLength="1" d="M32 56 C42 26 61 18 78 35"></path>
         </svg>
         <span class="intro__shot-tag">phones down</span>
       </div>
@@ -127,7 +136,7 @@
       <span class="intro__trail-dot intro__trail-dot--three" data-intro-trail></span>
       <span class="intro__trail-dot intro__trail-dot--four" data-intro-trail></span>
       <div class="intro__motto" data-intro-motto>
-        <span>Forget the feed.</span>
+        <span>Show up.</span>
         <strong>Find your friends.</strong>
       </div>
       <p class="intro__tagline" data-intro-tagline>Groupify turns shared interests into real plans.</p>
@@ -652,6 +661,6 @@
 
 <script src="scripts/vendor/gsap.min.js?v=3.12.5" defer></script>
 <script src="scripts/vendor/ScrollTrigger.min.js?v=3.12.5" defer></script>
-<script src="scripts/main.js?v=pin-no-stitches-20260703" defer></script>
+<script src="scripts/main.js?v=map-safe-20260703" defer></script>
 </body>
 </html>
