@@ -41,6 +41,15 @@ body.intro-lock{overflow:hidden}
 .intro.gsap-on .intro__hook,.intro.gsap-on .intro__hook-line{transition:none}
 @media (prefers-reduced-motion:reduce){.intro__hook{display:none}}
 
+/* pure-CSS version of the beats (.css-show, set by playFallbackIntro when
+   GSAP is unavailable or its ticker stalled) — same three-line story, run
+   entirely by the compositor so it can't freeze */
+.intro.css-show .intro__hook{opacity:1}
+.intro.css-show .intro__hook-line{animation:hook-beat 1.15s cubic-bezier(.25,.8,.3,1) both}
+.intro.css-show [data-hook="2"]{animation-delay:1.15s}
+.intro.css-show [data-hook="3"]{animation-delay:2.3s}
+@keyframes hook-beat{0%{opacity:0;transform:translateY(22px)}14%,76%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-14px)}}
+
 /* ---- world map (real Mercator map injected from assets/world.svg) ---- */
 .intro__world{position:absolute;inset:0;z-index:1;opacity:0;will-change:transform,opacity,filter;
   transition:transform 1.5s cubic-bezier(.55,.02,.25,1),opacity .8s ease,filter 1.2s ease}
@@ -339,6 +348,16 @@ body.intro-lock{overflow:hidden}
   .js .hero__copy > *,.js .hero__visual .phone,.js .hero__visual .polaroid,.js .hero__visual .sticker{opacity:1;animation:none}
   .js .site-header{opacity:1;transform:none;animation:none}
 }
+/* absolute safety net (.intro-settled lands 3.2s after intro-done): if a
+   browser never ran the entrance animations, force everything visible.
+   By then every entrance above has long finished, so on healthy browsers
+   this is a no-op. Phones/polaroids keep their static transform tilts —
+   only the animated scale/translate/opacity are pinned to end values. */
+.js.intro-settled .site-header{opacity:1;transform:none;animation:none}
+.js.intro-settled .hero__copy > *{opacity:1;transform:none;animation:none}
+.js.intro-settled .hero__visual .phone,
+.js.intro-settled .hero__visual .polaroid,
+.js.intro-settled .hero__visual .sticker{opacity:1;scale:1;translate:0 0;animation:none}
 
 @media (max-width:760px){
   .intro__world .mpin:not(.mpin--zh):not(.mpin--london){display:none}
@@ -404,9 +423,9 @@ body.intro-lock{overflow:hidden}
 .categories .polaroid--right{right:-26px;top:34px;--rot:-8deg}
 .categories .container{position:relative;z-index:1}
 
-.download__inner .polaroid{position:absolute;z-index:1;--w:130px}
-.download__inner .polaroid--dl{left:4%;bottom:-18px;--rot:-8deg}
-.download__inner .polaroid--dr{right:4%;top:-14px;--rot:9deg}
+.download__inner .polaroid{position:absolute;z-index:1;--w:150px}
+.download__inner .polaroid--dl{left:2.5%;bottom:-30px;--rot:-7deg}
+.download__inner .polaroid--dr{right:2.5%;top:-26px;--rot:8deg}
 
 @media (max-width:900px){
   .categories .polaroid,.download__inner .polaroid,.feature__media .polaroid{display:none}

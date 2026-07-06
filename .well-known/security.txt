@@ -1,0 +1,5 @@
+# Groupify — vulnerability disclosure (RFC 9116)
+Contact: mailto:info@groupify.ch
+Expires: 2027-07-06T00:00:00.000Z
+Preferred-Languages: de, en
+# Canonical: add https://<final-domain>/.well-known/security.txt at launch

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Groupify — Find your people</title>
 <meta name="description" content="Groupify is the social app for finding and organizing group events and clubs around shared interests. Discover what's happening near you — and bring your people.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://images.unsplash.com data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#16193b">
 <meta property="og:type" content="website">
@@ -20,12 +20,13 @@
 <meta name="twitter:image" content="assets/og-image.png">
 <link rel="icon" type="image/png" href="Logo/groupify-mark-teal.png">
 <link rel="apple-touch-icon" href="Logo/groupify-mark-teal.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,800;1,500;1,700&family=Inter:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<!-- fonts + photos are self-hosted: the page makes zero third-party requests -->
+<link rel="preload" href="assets/fonts/playfair-display-800.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/fonts/fonts.css?v=secure-20260706">
 <link rel="stylesheet" href="styles/theme.css">
-<link rel="stylesheet" href="styles/main.css?v=sections-removed-20260703">
-<link rel="stylesheet" href="styles/cinema.css?v=sections-removed-20260703">
+<link rel="stylesheet" href="styles/main.css?v=secure-20260706">
+<link rel="stylesheet" href="styles/cinema.css?v=secure-20260706">
 </head>
 <body>
 
@@ -167,6 +168,7 @@
       <a href="#categories">Categories</a>
       <a href="#how">How it works</a>
       <a href="#community">Community</a>
+      <a href="#faq">FAQ</a>
     </nav>
     <div class="header-actions">
       <a href="#download" class="btn btn--primary">Get the app</a>
@@ -209,7 +211,7 @@
             <span class="store-badge__txt"><small>GET IT ON</small><strong>Google Play</strong></span>
           </a>
         </div>
-        <p class="hero__note">Free to join · Made for real-life meetups</p>
+        <p class="hero__note">Free to join · Made for real-life meetups · Swiss made</p>
       </div>
 
       <div class="hero__visual" aria-hidden="false">
@@ -222,14 +224,14 @@
         <figure class="polaroid polaroid--bball" data-parallax="0.05">
           <span class="polaroid__tape"></span>
           <div class="polaroid__ph" style="--tint:rgba(232,100,30,.3)">
-            <img src="https://images.unsplash.com/photo-1519861531473-9200262188bf?auto=format&fit=crop&w=420&q=70" alt="Pickup basketball game" loading="eager" decoding="async">
+            <img src="assets/photos/pickup-basketball.jpg" alt="Pickup basketball game" loading="eager" decoding="async">
           </div>
           <figcaption>Pickup game · Tuesdays</figcaption>
         </figure>
         <figure class="polaroid polaroid--picnic" data-parallax="0.08">
           <span class="polaroid__tape polaroid__tape--corner"></span>
           <div class="polaroid__ph" style="--tint:rgba(47,143,91,.28)">
-            <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=420&q=70" alt="Friends laughing together outside" loading="eager" decoding="async">
+            <img src="assets/photos/picnic-crew.jpg" alt="Friends laughing together outside" loading="eager" decoding="async">
           </div>
           <figcaption>Sunday picnic crew</figcaption>
         </figure>
@@ -268,7 +270,7 @@
           <figure class="polaroid polaroid--bl" style="--rot:-8deg" data-parallax="0.06">
             <span class="polaroid__tape"></span>
             <div class="polaroid__ph" style="--tint:rgba(58,52,214,.26)">
-              <img src="https://images.unsplash.com/photo-1519677100203-a0e668c92439?auto=format&fit=crop&w=420&q=70" alt="Zürich by the lake" loading="lazy" decoding="async">
+              <img src="assets/photos/zurich-lake.jpg" alt="Zürich by the lake" loading="lazy" decoding="async">
             </div>
             <figcaption>Somewhere in Zürich</figcaption>
           </figure>
@@ -295,7 +297,7 @@
           <figure class="polaroid polaroid--br" style="--rot:7deg" data-parallax="0.07">
             <span class="polaroid__tape"></span>
             <div class="polaroid__ph" style="--tint:rgba(232,100,30,.3)">
-              <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=420&q=70" alt="Crowd at a small concert" loading="lazy" decoding="async">
+              <img src="assets/photos/open-air-concert.jpg" alt="Crowd at a small concert" loading="lazy" decoding="async">
             </div>
             <figcaption>Open-air night 🎶</figcaption>
           </figure>
@@ -322,7 +324,7 @@
           <figure class="polaroid polaroid--bl" style="--rot:-7deg" data-parallax="0.06">
             <span class="polaroid__tape"></span>
             <div class="polaroid__ph" style="--tint:rgba(47,143,91,.3)">
-              <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=420&q=70" alt="Stacks of books at a book club" loading="lazy" decoding="async">
+              <img src="assets/photos/book-club.jpg" alt="Stacks of books at a book club" loading="lazy" decoding="async">
             </div>
             <figcaption>Book club, ch. 4</figcaption>
           </figure>
@@ -349,7 +351,7 @@
           <figure class="polaroid polaroid--br" style="--rot:8deg" data-parallax="0.07">
             <span class="polaroid__tape"></span>
             <div class="polaroid__ph" style="--tint:rgba(106,52,214,.28)">
-              <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=420&q=70" alt="Friends laughing around a table" loading="lazy" decoding="async">
+              <img src="assets/photos/friends-table.jpg" alt="Friends laughing around a table" loading="lazy" decoding="async">
             </div>
             <figcaption>The after-glow ✨</figcaption>
           </figure>
@@ -364,14 +366,14 @@
     <figure class="polaroid polaroid--left" data-parallax="0.05" aria-hidden="true">
       <span class="polaroid__tape"></span>
       <div class="polaroid__ph" style="--tint:rgba(31,167,159,.3)">
-        <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=420&q=70" alt="" loading="lazy" decoding="async">
+        <img src="assets/photos/saturday-hike.jpg" alt="" loading="lazy" decoding="async">
       </div>
       <figcaption>Saturday hike ⛰</figcaption>
     </figure>
     <figure class="polaroid polaroid--right" data-parallax="0.07" aria-hidden="true">
       <span class="polaroid__tape"></span>
       <div class="polaroid__ph" style="--tint:rgba(242,206,27,.35)">
-        <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=420&q=70" alt="" loading="lazy" decoding="async">
+        <img src="assets/photos/sunrise-yoga.jpg" alt="" loading="lazy" decoding="async">
       </div>
       <figcaption>Sunrise yoga</figcaption>
     </figure>
@@ -379,7 +381,7 @@
       <header class="section-head center reveal" data-reveal>
         <span class="eyebrow">Whatever you're into</span>
         <h2 class="section-title">Pick your <em>interests</em></h2>
-        <p class="lead">Groupify groups people by what they love. Choose a few and your city rearranges itself around them.</p>
+        <p class="lead">Yoga, latte art, SUP on the lake or pickup basketball — Groupify groups people by what they love. Choose a few interests and your city rearranges itself around them.</p>
       </header>
       <ul class="chips reveal" data-reveal data-stagger>
         <li class="chip" style="--c:var(--yellow)"><span class="chip__ic">✈️</span>Trips</li>
@@ -462,7 +464,7 @@
         <figure class="polaroid polaroid--story reveal" data-reveal>
           <span class="polaroid__tape"></span>
           <div class="polaroid__ph" style="--tint:rgba(232,100,30,.3)">
-            <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=520&q=70" alt="Basketball dropping through the hoop at night" loading="lazy" decoding="async">
+            <img src="assets/photos/swish-night.jpg" alt="Basketball dropping through the hoop at night" loading="lazy" decoding="async">
           </div>
           <figcaption>Now it's a Tuesday thing.</figcaption>
         </figure>
@@ -483,7 +485,7 @@
       <div class="community__cards reveal" data-reveal>
         <article class="ecard c-orange">
           <div class="ecard__ph">
-            <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=520&q=70" alt="Trail runner in the mountains at sunset" loading="lazy" decoding="async">
+            <img src="assets/photos/mountain-run.jpg" alt="Trail runner in the mountains at sunset" loading="lazy" decoding="async">
           </div>
           <div class="ecard__meta">Wed 01 Nov · 14:00</div>
           <h3 class="ecard__title">Mountain running</h3>
@@ -491,7 +493,7 @@
         </article>
         <article class="ecard c-blue">
           <div class="ecard__ph ecard__ph--light">
-            <img src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=520&q=70" alt="Runner warming up in the park" loading="lazy" decoding="async">
+            <img src="assets/photos/park-run.jpg" alt="Runner warming up in the park" loading="lazy" decoding="async">
           </div>
           <div class="ecard__meta">Mon 15 Sep · 09:30</div>
           <h3 class="ecard__title">Easy pace park run</h3>
@@ -499,7 +501,7 @@
         </article>
         <article class="ecard c-yellow">
           <div class="ecard__ph">
-            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=520&q=70" alt="Shared table full of good food" loading="lazy" decoding="async">
+            <img src="assets/photos/cheese-tour.jpg" alt="Shared table full of good food" loading="lazy" decoding="async">
           </div>
           <div class="ecard__meta">Tue 22 Oct · 13:30</div>
           <h3 class="ecard__title">Artisanal cheese tour</h3>
@@ -509,21 +511,135 @@
     </div>
   </section>
 
+  <!-- ===================== ABOUT / SWISS MADE ===================== -->
+  <div class="tear tear--white-on-cream" aria-hidden="true"></div>
+  <section class="about" id="about">
+    <div class="container">
+      <header class="section-head center reveal" data-reveal>
+        <span class="eyebrow">About Groupify</span>
+        <h2 class="section-title">Made in <em>Switzerland</em></h2>
+        <p class="lead">Groupify was born in 2024, when meeting people around a hobby still meant impersonal, complicated apps scattered across the internet. We thought you deserve better: swipe through <strong>hobbies, not profiles</strong>.</p>
+      </header>
+      <ul class="trust reveal" data-reveal data-stagger>
+        <li class="trust__card">
+          <span class="trust__ic" aria-hidden="true">
+            <svg viewBox="0 0 32 32" width="22" height="22" role="img" aria-label="">
+              <rect width="32" height="32" rx="7" fill="#e23b34"/>
+              <path d="M13 6h6v7h7v6h-7v7h-6v-7H6v-6h7z" fill="#fff"/>
+            </svg>
+          </span>
+          <h3>Swiss made &amp; hosted</h3>
+          <p>Built in Zürich &amp; Basel — and every bit of your data stays on Swiss servers.</p>
+        </li>
+        <li class="trust__card">
+          <span class="trust__ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--green)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3l7 3v5c0 4.4-3 8.2-7 9.5C8 19.2 5 15.4 5 11V6z"/>
+              <path d="M9 11.5l2.2 2.2 4.3-4.3"/>
+            </svg>
+          </span>
+          <h3>Real, reviewed events</h3>
+          <p>Every activity and its content is checked and filtered. Quality over quantity, always.</p>
+        </li>
+        <li class="trust__card">
+          <span class="trust__ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="8.5" r="3.2"/>
+              <path d="M3.5 19.5c.6-3.1 2.8-5 5.5-5s4.9 1.9 5.5 5"/>
+              <circle cx="17" cy="9.5" r="2.6"/>
+              <path d="M16.4 14.6c2.3.3 3.8 1.9 4.3 4.2"/>
+            </svg>
+          </span>
+          <h3>A genuine community</h3>
+          <p>A two-step sign-up keeps Groupify to open, curious people who actually show up.</p>
+        </li>
+        <li class="trust__card">
+          <span class="trust__ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--teal)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="8.5"/>
+              <path d="M3.5 12h17"/>
+              <path d="M12 3.5c-2.5 2.4-3.8 5.3-3.8 8.5s1.3 6.1 3.8 8.5c2.5-2.4 3.8-5.3 3.8-8.5s-1.3-6.1-3.8-8.5z"/>
+            </svg>
+          </span>
+          <h3>English &amp; German</h3>
+          <p>Use Groupify in the language you feel at home in — Deutsch works too.</p>
+        </li>
+      </ul>
+      <p class="about__sign reveal" data-reveal>— the Groupify crew, Zürich &amp; Basel <span class="about__tag">#letsgroupify</span></p>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <div class="tear tear--cream-on-white" aria-hidden="true"></div>
+  <section class="faq" id="faq">
+    <div class="container">
+      <header class="section-head center reveal" data-reveal>
+        <span class="eyebrow">Good to know</span>
+        <h2 class="section-title">Questions &amp; <em>answers</em></h2>
+      </header>
+      <div class="faq__list reveal" data-reveal data-stagger>
+        <details class="faq__item">
+          <summary>What is Groupify?<span class="faq__x" aria-hidden="true"></span></summary>
+          <div class="faq__a">
+            <p>Groupify is a simple, modern platform that connects people who share the same interests. Create your own activity or join one nearby — browse the map, see who else is going, and take it from the group chat into real life.</p>
+          </div>
+        </details>
+        <details class="faq__item">
+          <summary>What does “Groupify” actually mean?<span class="faq__x" aria-hidden="true"></span></summary>
+          <div class="faq__a">
+            <p>It's the English words <em>group</em> and <em>unify</em> smushed together: get together as a group and have a great time — that's the whole idea. #letsgroupify</p>
+          </div>
+        </details>
+        <details class="faq__item">
+          <summary>What does Groupify cost?<span class="faq__x" aria-hidden="true"></span></summary>
+          <div class="faq__a">
+            <p>Nothing. Groupify is run with a lot of heart, so the app and all of its features are free. Some hosts may charge for their own activities — a barista course needs beans, after all.</p>
+          </div>
+        </details>
+        <details class="faq__item">
+          <summary>Where can I download Groupify?<span class="faq__x" aria-hidden="true"></span></summary>
+          <div class="faq__a">
+            <p>On the Apple App Store and on Google Play — just search for “Groupify”, or use the <a href="#download">download buttons</a> below.</p>
+          </div>
+        </details>
+        <details class="faq__item">
+          <summary>Which languages does Groupify speak?<span class="faq__x" aria-hidden="true"></span></summary>
+          <div class="faq__a">
+            <p>Groupify is currently available in German and English.</p>
+          </div>
+        </details>
+        <details class="faq__item">
+          <summary>Where is Groupify developed?<span class="faq__x" aria-hidden="true"></span></summary>
+          <div class="faq__a">
+            <p>Groupify is run by groupify GmbH in Zürich and engineered together with sonono GmbH in Basel — 100% Swiss made.</p>
+          </div>
+        </details>
+        <details class="faq__item">
+          <summary>How do you keep members and activities legit?<span class="faq__x" aria-hidden="true"></span></summary>
+          <div class="faq__a">
+            <p>New members go through a two-step sign-up, and every activity is reviewed and filtered. All data is stored in Switzerland (with Cyon in Basel), so your community — and your data — stay in good hands.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== DOWNLOAD CTA ===================== -->
   <section class="download" id="download">
     <div class="container download__inner">
       <span class="download__dots" aria-hidden="true"></span>
+      <span class="download__tag" aria-hidden="true">#letsgroupify</span>
       <figure class="polaroid polaroid--dl" aria-hidden="true">
         <span class="polaroid__tape"></span>
-        <div class="polaroid__ph" style="--tint:rgba(232,100,30,.3)">
-          <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=360&q=70" alt="" loading="lazy" decoding="async">
+        <div class="polaroid__ph" style="--tint:rgba(232,100,30,.28)">
+          <img src="assets/photos/cheers.jpg" alt="" loading="lazy" decoding="async">
         </div>
         <figcaption>See you there?</figcaption>
       </figure>
       <figure class="polaroid polaroid--dr" aria-hidden="true">
         <span class="polaroid__tape"></span>
-        <div class="polaroid__ph" style="--tint:rgba(106,52,214,.3)">
-          <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=360&q=70" alt="" loading="lazy" decoding="async">
+        <div class="polaroid__ph" style="--tint:rgba(31,167,159,.26)">
+          <img src="assets/photos/dinner-lights.jpg" alt="" loading="lazy" decoding="async">
         </div>
         <figcaption>Your new crew</figcaption>
       </figure>
@@ -559,7 +675,8 @@
       <a class="brand" href="index.html#hero" aria-label="Groupify home">
         <img class="brand__logo brand__logo--footer" src="Logo/groupify-wordmark-white.png" alt="Groupify" width="148" height="39" loading="lazy" decoding="async">
       </a>
-      <p>Find your people. Made in Switzerland 🇨🇭</p>
+      <p>Find your people. Made with ❤️ in Zürich &amp; Basel.</p>
+      <a class="footer-mail" href="mailto:info@groupify.ch">info@groupify.ch</a>
     </div>
     <nav class="footer-cols" aria-label="Footer">
       <div>
@@ -570,8 +687,9 @@
       </div>
       <div>
         <h4>Company</h4>
-        <a href="#community">About</a>
-        <a href="legal.html#imprint">Contact</a>
+        <a href="#about">About</a>
+        <a href="#faq">FAQ</a>
+        <a href="mailto:info@groupify.ch">Contact</a>
       </div>
       <div>
         <h4>Legal</h4>
@@ -589,6 +707,6 @@
 
 <script src="scripts/vendor/gsap.min.js?v=3.12.5" defer></script>
 <script src="scripts/vendor/ScrollTrigger.min.js?v=3.12.5" defer></script>
-<script src="scripts/main.js?v=sections-removed-20260703" defer></script>
+<script src="scripts/main.js?v=everywhere-20260704" defer></script>
 </body>
 </html>

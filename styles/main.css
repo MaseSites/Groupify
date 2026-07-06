@@ -198,14 +198,75 @@
 .c-yellow{background:var(--yellow);color:#3a3208}
 
 /* ==========================================================================
+   About — Swiss made (cream, paper-note trust cards)
+   ========================================================================== */
+.about{padding-block:var(--section-y);background:var(--cream);position:relative;overflow:hidden}
+.about .section-head{max-width:60ch}
+.about .lead{max-width:52ch;margin-inline:auto}
+.trust{display:grid;grid-template-columns:repeat(4,1fr);gap:1.3rem;margin-top:clamp(2rem,4vw,3rem)}
+.trust__card{--rot:0deg;position:relative;background:#fff;border:2px solid rgba(20,22,58,.88);border-radius:10px;
+  padding:1.9rem 1.35rem 1.5rem;box-shadow:7px 8px 0 rgba(20,22,58,.13);rotate:var(--rot)}
+.trust__card:nth-child(1){--rot:-.9deg}
+.trust__card:nth-child(2){--rot:.7deg;background:#fdfaf2}
+.trust__card:nth-child(3){--rot:-.5deg}
+.trust__card:nth-child(4){--rot:.9deg;background:#fdfaf2}
+.trust__card::before{content:"";position:absolute;left:50%;top:-12px;width:76px;height:24px;
+  transform:translateX(-50%) rotate(-3deg);background:rgba(246,241,231,.88);
+  border-left:1px dashed rgba(20,22,58,.2);border-right:1px dashed rgba(20,22,58,.2);
+  box-shadow:0 3px 8px rgba(0,0,0,.12)}
+.trust__ic{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--cream);
+  border:2px solid var(--ink);font-size:1.3rem;line-height:1;margin-bottom:.9rem;box-shadow:3px 4px 0 rgba(20,22,58,.16)}
+.trust__ic svg{display:block}
+.trust__card:first-child .trust__ic svg{filter:drop-shadow(1px 2px 0 rgba(20,22,58,.2))}
+.trust__card h3{font-family:var(--font-sans);font-size:1.12rem;letter-spacing:0;line-height:1.2;margin-bottom:.45rem}
+.trust__card p{margin:0;color:var(--muted);font-size:.95rem}
+.about__sign{margin:2.8rem auto 0;text-align:center;font-family:var(--font-hand);font-size:1.5rem;
+  color:#3c3f58;transform:rotate(-1.5deg)}
+.about__tag{display:inline-block;margin-left:.6em;padding:.05em .55em;background:var(--yellow);color:var(--ink);
+  border:2px solid var(--ink);border-radius:6px;box-shadow:3px 4px 0 rgba(20,22,58,.18);transform:rotate(2deg)}
+
+/* ==========================================================================
+   FAQ (white, hand-cut accordion cards)
+   ========================================================================== */
+.faq{padding-block:var(--section-y)}
+.faq__list{max-width:760px;margin-inline:auto;display:grid;gap:1rem}
+.faq__item{--rot:0deg;background:#fff;border:2px solid rgba(20,22,58,.88);border-radius:12px;
+  box-shadow:5px 6px 0 rgba(20,22,58,.12);rotate:var(--rot);transition:box-shadow .25s}
+.faq__item:nth-child(odd){--rot:-.35deg}
+.faq__item:nth-child(even){--rot:.3deg}
+.faq__item[open]{box-shadow:7px 9px 0 rgba(20,22,58,.16)}
+.faq__item summary{display:flex;align-items:center;justify-content:space-between;gap:1rem;list-style:none;
+  cursor:pointer;padding:1.1rem 1.3rem;font-weight:700;font-size:1.06rem;line-height:1.35}
+.faq__item summary::-webkit-details-marker{display:none}
+.faq__x{position:relative;flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:var(--primary-soft);
+  border:2px solid var(--ink);box-shadow:2px 3px 0 rgba(20,22,58,.18);
+  transition:transform .35s cubic-bezier(.2,1.2,.4,1),background .25s}
+.faq__x::before,.faq__x::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:2.5px;
+  border-radius:2px;background:var(--ink);translate:-50% -50%}
+.faq__x::after{rotate:90deg}
+.faq__item[open] .faq__x{transform:rotate(135deg);background:var(--yellow)}
+.faq__a{padding:0 1.3rem 1.25rem;color:var(--muted)}
+/* transform-only entrance: if a browser never plays it, the text is
+   merely unshifted — never invisible */
+.faq__a p{margin:0;max-width:62ch;animation:faq-in .35s ease}
+.faq__a a{color:var(--primary);font-weight:600}
+.faq__a a:hover{text-decoration:underline}
+@keyframes faq-in{from{translate:0 -6px}to{translate:0 0}}
+
+/* ==========================================================================
    Download CTA
    ========================================================================== */
 .download{padding-block:var(--section-y)}
-.download__inner{position:relative;background:linear-gradient(160deg,#22265f,var(--navy));border-radius:32px;padding:clamp(2.5rem,6vw,5rem);text-align:center;color:#fff;overflow:hidden;isolation:isolate}
-.download__dots{position:absolute;inset:0;z-index:-1;background-image:radial-gradient(rgba(255,255,255,.5) 1px,transparent 1.5px);background-size:8px 8px;mix-blend-mode:soft-light;opacity:.3}
+/* no overflow:hidden — the corner polaroids hang over the card edges
+   like taped-on photos instead of being clipped */
+.download__inner{position:relative;background:linear-gradient(160deg,#22265f,var(--navy));border-radius:32px;padding:clamp(2.5rem,6vw,5rem);text-align:center;color:#fff;isolation:isolate}
+.download__dots{position:absolute;inset:0;z-index:-1;border-radius:inherit;overflow:hidden;background-image:radial-gradient(rgba(255,255,255,.5) 1px,transparent 1.5px);background-size:8px 8px;mix-blend-mode:soft-light;opacity:.3}
 .download__title{font-size:var(--fs-h2);color:#fff}
 .download__lead{color:#c3c5e6;margin:1rem 0 2rem;font-size:var(--fs-lead)}
 .download .store-badge{box-shadow:inset 0 0 0 1px rgba(255,255,255,.12),0 14px 32px rgba(0,0,0,.32)}
+.download__tag{position:absolute;left:clamp(1.2rem,6vw,4.5rem);top:clamp(1.2rem,4vw,2.6rem);z-index:1;
+  font-family:var(--font-hand);font-size:clamp(1.35rem,2.6vw,1.9rem);line-height:1;color:var(--yellow);
+  transform:rotate(-6deg);text-shadow:0 4px 12px rgba(0,0,0,.32)}
 
 /* ==========================================================================
    Footer
@@ -213,6 +274,8 @@
 .site-footer{background:var(--ink);color:#cfd0e6;padding-block:3.5rem 2rem}
 .footer-inner{display:grid;grid-template-columns:1.4fr 2fr;gap:2rem;padding-bottom:2.5rem;border-bottom:1px solid rgba(255,255,255,.1)}
 .footer-brand p{margin-top:1rem;color:#9092b8;max-width:26ch}
+.footer-mail{display:inline-block;margin-top:.4rem;color:#c9c8f6;font-weight:600;transition:color .2s}
+.footer-mail:hover{color:#fff}
 .footer-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
 .footer-cols h4{font-family:var(--font-sans);font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;color:#fff;margin-bottom:1rem}
 .footer-cols a{display:block;padding:.3rem 0;color:#9092b8;transition:color .2s}
@@ -243,9 +306,12 @@
   .steps,.footer-cols{grid-template-columns:1fr}
   .footer-inner{grid-template-columns:1fr}
   .steps{gap:1rem}
+  .trust{grid-template-columns:1fr 1fr;gap:1.1rem}
 }
 @media (max-width:560px){
   .header-actions .btn{display:none}
+  .trust{grid-template-columns:1fr}
+  .download__tag{position:static;display:inline-block;margin-bottom:.8rem}
   .hero__visual{height:400px}
   .hero__visual .phone{width:210px}
   .phone--back{width:180px !important}

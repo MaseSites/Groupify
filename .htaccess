@@ -1,0 +1,48 @@
+# ==========================================================================
+# Groupify — security hardening (Apache, e.g. cyon)
+# The CSP here mirrors the <meta> CSP in the HTML and adds the directives
+# that only work as real HTTP headers (frame-ancestors, HSTS, …).
+# ==========================================================================
+
+# ---- force HTTPS ---------------------------------------------------------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# ---- security headers ----------------------------------------------------
+<IfModule mod_headers.c>
+  # only ship HSTS once HTTPS is confirmed working; preload can be added later
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests"
+  Header always set X-Frame-Options "DENY"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), usb=(), xr-spatial-tracking=(), interest-cohort=()"
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+  Header always set Cross-Origin-Resource-Policy "same-origin"
+  # disable the legacy XSS auditor (it created vulnerabilities of its own)
+  Header always set X-XSS-Protection "0"
+</IfModule>
+
+# ---- no directory listings, no server fingerprint ------------------------
+Options -Indexes
+ServerSignature Off
+
+# ---- block dotfiles and non-public file types ----------------------------
+<FilesMatch "^\.|\.(md|py|db|log|bak|sql|conf|pdf)$">
+  Require all denied
+</FilesMatch>
+
+# ---- sane caching (hashed ?v= busting is used for css/js) ----------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType image/jpeg "access plus 30 days"
+  ExpiresByType image/png "access plus 30 days"
+  ExpiresByType image/svg+xml "access plus 30 days"
+  ExpiresByType font/woff2 "access plus 365 days"
+</IfModule>

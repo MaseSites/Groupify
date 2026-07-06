@@ -4,17 +4,22 @@
   var root = document.documentElement;
   root.classList.add("js");
 
-  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var reduced = false;
+  try { reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) { /* ancient browser */ }
 
   /* ==================================================================
      Cinematic intro — world map → Zürich → basketball → swish → hero
      ================================================================== */
   var intro = document.querySelector("[data-intro]");
-  var INTRO_KEY = "gfy-intro-seen-craft-shot-v6";
+  var INTRO_KEY = "gfy-intro-seen-craft-shot-v7";
 
   function introDone() {
     root.classList.add("intro-done");
     document.body.classList.remove("intro-lock");
+    /* absolute safety net: if a browser never runs the CSS entrance
+       animations, .intro-settled forces header + hero fully visible
+       (all entrances are over well before 3.2s) */
+    setTimeout(function () { root.classList.add("intro-settled"); }, 3200);
   }
 
   function seenThisSession() {
@@ -24,14 +29,27 @@
     try { sessionStorage.setItem(INTRO_KEY, "1"); } catch (e) { /* private mode */ }
   }
 
+  /* if the intro bootstrap itself throws (a browser quirk, a missing
+     API), don't leave the page stuck behind the curtain — drop the
+     overlay and hand straight off to the site */
+  function startIntro() {
+    try { runIntro(); } catch (e) { if (intro) intro.remove(); introDone(); }
+  }
+
   if (!intro || reduced || seenThisSession()) {
     if (intro) intro.remove();
     introDone();
+  } else if (document.hidden) {
+    /* background tab / Safari preloading: rAF is frozen there, which used
+       to leave a dead navy curtain on screen. Hold the show back and start
+       it the moment the tab actually becomes visible. */
+    document.addEventListener("visibilitychange", function onVis() {
+      if (document.hidden) return;
+      document.removeEventListener("visibilitychange", onVis);
+      startIntro();
+    });
   } else {
-    /* if the intro bootstrap itself throws (a browser quirk, a missing
-       API), don't leave the page stuck behind the curtain — drop the
-       overlay and hand straight off to the site */
-    try { runIntro(); } catch (e) { if (intro) intro.remove(); introDone(); }
+    startIntro();
   }
 
   /* scroll polish is a nice-to-have; a ScrollTrigger hiccup on some
@@ -60,11 +78,20 @@
       if (timeline) timeline.kill();
       timers.forEach(clearTimeout);
       window.removeEventListener("resize", aimZurich);
+      window.removeEventListener("error", onRuntimeError);
+      window.removeEventListener("unhandledrejection", onRuntimeError);
       markSeen();
       intro.classList.add("out");
       introDone();
       setTimeout(function () { intro.remove(); }, 1000);
     }
+
+    /* any UNCAUGHT runtime error while the intro plays (inside a GSAP
+       tick, a resize handler, …) ends the show cleanly instead of leaving
+       the curtain up — the build-time try/catch can't see those */
+    function onRuntimeError() { finish(); }
+    window.addEventListener("error", onRuntimeError);
+    window.addEventListener("unhandledrejection", onRuntimeError);
 
     var skip = intro.querySelector("[data-intro-skip]");
     if (skip) skip.addEventListener("click", finish);
@@ -276,13 +303,21 @@
       }
     }
 
-    function playFallbackIntro() {
-      at(150, function () { intro.classList.add("act"); });
-      at(1900, function () { intro.classList.add("zoom"); });
-      at(3000, function () { intro.classList.add("scene-on"); });
-      at(4250, function () { intro.classList.add("swish"); burst(); });
-      at(5350, function () { intro.classList.add("motto-on"); });
-      at(7000, finish);
+    /* pure-CSS show (no GSAP needed): class flips + compositor-run CSS
+       animations. withHook prepends the "put your phone down" beats as
+       CSS keyframes (.css-show) and shifts the map show behind them. */
+    function playFallbackIntro(withHook) {
+      var shift = 0;
+      if (withHook && intro.querySelector("[data-intro-hook]")) {
+        shift = 2900;
+        intro.classList.add("css-show");
+      }
+      at(150 + shift, function () { intro.classList.add("act"); });
+      at(1900 + shift, function () { intro.classList.add("zoom"); });
+      at(3000 + shift, function () { intro.classList.add("scene-on"); });
+      at(4250 + shift, function () { intro.classList.add("swish"); burst(); });
+      at(5350 + shift, function () { intro.classList.add("motto-on"); });
+      at(7000 + shift, finish);
     }
 
     function getCenter(el) {
@@ -491,6 +526,19 @@
         .to(l2, { autoAlpha: 0, y: -18, duration: 0.3, ease: "power2.in" }, 2.05)
         .fromTo(l3, { autoAlpha: 0, y: 22 }, { autoAlpha: 1, y: 0, duration: 0.52 }, 2.2)
         .to(hook, { autoAlpha: 0, duration: 0.5, ease: "power2.inOut" }, 3.2);
+
+      /* liveness check: GSAP built the show but its ticker never advanced
+         (frozen rAF — Safari preloading, exotic in-app webviews, stalled
+         compositor). That's the "stuck navy screen". Swap to the pure-CSS
+         show, which the browser's compositor runs on its own. */
+      at(1100, function () {
+        if (finished || !timeline || timeline.time() > 0.05) return;
+        timeline.kill();
+        timeline = null;
+        intro.classList.remove("gsap-on");
+        hook.style.display = "none"; /* carries stuck inline styles */
+        playFallbackIntro(false);
+      });
     }
 
     /* run order: cold-open hook → cinematic map intro. A throw anywhere
@@ -501,10 +549,11 @@
       if (window.gsap && !freezing) {
         playColdOpen(function () {
           if (finished) return;
-          if (!playGsapIntro()) playFallbackIntro();
+          if (!playGsapIntro()) playFallbackIntro(false);
         });
       } else if (!playGsapIntro()) {
-        playFallbackIntro();
+        /* no GSAP at all: CSS-only show, incl. the hook beats */
+        playFallbackIntro(!freezing);
       }
     } catch (e) {
       finish();
