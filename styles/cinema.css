@@ -335,17 +335,18 @@ body.intro-lock{overflow:hidden}
 .js.intro-done .hero__copy > *:nth-child(4){animation-delay:.4s}
 .js.intro-done .hero__copy > *:nth-child(5){animation-delay:.5s}
 @keyframes hero-up{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
-.js .hero__visual .phone,.js .hero__visual .polaroid,.js .hero__visual .sticker{opacity:0}
+.js .hero__visual .phone,.js .hero__visual .polaroid,.js .hero__visual .sticker,.js .hero__visual .ticket{opacity:0}
 .js.intro-done .hero__visual .phone{animation:hero-pop .9s cubic-bezier(.2,1.2,.35,1) forwards .25s}
 .js.intro-done .hero__visual .phone--back{animation-delay:.4s}
 .js.intro-done .hero__visual .polaroid{animation:hero-pop .8s cubic-bezier(.2,1.4,.4,1) forwards .65s}
 .js.intro-done .hero__visual .polaroid--picnic{animation-delay:.8s}
 .js.intro-done .hero__visual .sticker{animation:hero-pop .7s cubic-bezier(.2,1.5,.4,1) forwards .95s}
+.js.intro-done .hero__visual .ticket{animation:hero-pop .8s cubic-bezier(.2,1.4,.4,1) forwards 1.1s}
 /* individual transform props (scale/translate) compose with the static
    `transform` tilts on phones & polaroids instead of overwriting them */
 @keyframes hero-pop{from{opacity:0;scale:.7;translate:0 20px}to{opacity:1;scale:1;translate:0 0}}
 @media (prefers-reduced-motion:reduce){
-  .js .hero__copy > *,.js .hero__visual .phone,.js .hero__visual .polaroid,.js .hero__visual .sticker{opacity:1;animation:none}
+  .js .hero__copy > *,.js .hero__visual .phone,.js .hero__visual .polaroid,.js .hero__visual .sticker,.js .hero__visual .ticket{opacity:1;animation:none}
   .js .site-header{opacity:1;transform:none;animation:none}
 }
 /* absolute safety net (.intro-settled lands 3.2s after intro-done): if a
@@ -357,7 +358,8 @@ body.intro-lock{overflow:hidden}
 .js.intro-settled .hero__copy > *{opacity:1;transform:none;animation:none}
 .js.intro-settled .hero__visual .phone,
 .js.intro-settled .hero__visual .polaroid,
-.js.intro-settled .hero__visual .sticker{opacity:1;scale:1;translate:0 0;animation:none}
+.js.intro-settled .hero__visual .sticker,
+.js.intro-settled .hero__visual .ticket{opacity:1;scale:1;translate:0 0;animation:none}
 
 @media (max-width:760px){
   .intro__world .mpin:not(.mpin--zh):not(.mpin--london){display:none}
@@ -410,12 +412,13 @@ body.intro-lock{overflow:hidden}
 
 /* placement helpers */
 .hero__visual .polaroid{position:absolute;z-index:3}
-.polaroid--bball{--w:150px;--rot:-9deg;--tint:rgba(232,100,30,.3);left:-4%;top:2%}
 .polaroid--picnic{--w:140px;--rot:7deg;--tint:rgba(47,143,91,.28);right:-3%;bottom:0}
 
-.feature__media .polaroid{position:absolute;z-index:2;--w:150px}
-.feature__media .polaroid--bl{left:2%;bottom:4%}
-.feature__media .polaroid--br{right:2%;bottom:6%}
+/* feature polaroids tuck BEHIND the phone (z0 — above the blob, below the
+   phone at z1) and hug the outer corner, so the app screen stays visible */
+.feature__media .polaroid{position:absolute;z-index:0;--w:150px}
+.feature__media .polaroid--bl{left:-1%;bottom:0}
+.feature__media .polaroid--br{right:-1%;bottom:0}
 
 .categories{position:relative;overflow:hidden}
 .categories .polaroid{position:absolute;z-index:0;--w:160px}
@@ -429,7 +432,6 @@ body.intro-lock{overflow:hidden}
 
 @media (max-width:900px){
   .categories .polaroid,.download__inner .polaroid,.feature__media .polaroid{display:none}
-  .polaroid--bball{--w:112px;left:0}
   .polaroid--picnic{--w:104px;right:0}
 }
 

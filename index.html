@@ -25,8 +25,8 @@
 <link rel="preload" href="assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/fonts/fonts.css?v=secure-20260706">
 <link rel="stylesheet" href="styles/theme.css">
-<link rel="stylesheet" href="styles/main.css?v=secure-20260706">
-<link rel="stylesheet" href="styles/cinema.css?v=secure-20260706">
+<link rel="stylesheet" href="styles/main.css?v=polish-20260707">
+<link rel="stylesheet" href="styles/cinema.css?v=polish-20260707">
 </head>
 <body>
 
@@ -221,13 +221,6 @@
         <div class="phone phone--front">
           <img src="HandyBilder/web/signup-people.png" alt="Groupify sign-up screen — Find your people" loading="eager" decoding="async">
         </div>
-        <figure class="polaroid polaroid--bball" data-parallax="0.05">
-          <span class="polaroid__tape"></span>
-          <div class="polaroid__ph" style="--tint:rgba(232,100,30,.3)">
-            <img src="assets/photos/pickup-basketball.jpg" alt="Pickup basketball game" loading="eager" decoding="async">
-          </div>
-          <figcaption>Pickup game · Tuesdays</figcaption>
-        </figure>
         <figure class="polaroid polaroid--picnic" data-parallax="0.08">
           <span class="polaroid__tape polaroid__tape--corner"></span>
           <div class="polaroid__ph" style="--tint:rgba(47,143,91,.28)">
@@ -235,6 +228,27 @@
           </div>
           <figcaption>Sunday picnic crew</figcaption>
         </figure>
+        <aside class="ticket ticket--red ticket--sm" aria-hidden="true">
+          <div class="ticket__in">
+            <div class="ticket__ph"><img src="assets/photos/salsa-night.jpg" alt="" loading="eager" decoding="async"></div>
+            <div class="ticket__body">
+              <span class="ticket__meta">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="16" rx="3"/><path d="M3.5 10h17M8 2.5V6M16 2.5V6"/></svg>
+                Tue 21 Jul, 20:00
+              </span>
+              <strong class="ticket__title">Riverside salsa</strong>
+              <span class="ticket__meta">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9.5" rx="2.5"/><path d="M8.5 11V7.5a3.5 3.5 0 0 1 6.8-1.2"/></svg>
+                Open event
+              </span>
+              <span class="ticket__att">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M4 19c.5-2.8 2.5-4.5 5-4.5s4.5 1.7 5 4.5"/><path d="M15.5 5.6a3 3 0 0 1 0 5M16.6 14.8c2 .4 3.2 1.9 3.6 4"/></svg>
+                23
+              </span>
+            </div>
+            <span class="ticket__stub">Admit all</span>
+          </div>
+        </aside>
         <span class="sticker sticker--star" style="--rot:-12deg" aria-hidden="true">★</span>
         <span class="sticker sticker--hand" style="--rot:8deg" aria-hidden="true">👉</span>
       </div>
@@ -267,13 +281,27 @@
           <div class="phone reveal" data-reveal>
             <img src="HandyBilder/web/discover-map.png" alt="Discover map of Zürich with photo event pins" loading="lazy" decoding="async">
           </div>
-          <figure class="polaroid polaroid--bl" style="--rot:-8deg" data-parallax="0.06">
-            <span class="polaroid__tape"></span>
-            <div class="polaroid__ph" style="--tint:rgba(58,52,214,.26)">
-              <img src="assets/photos/zurich-lake.jpg" alt="Zürich by the lake" loading="lazy" decoding="async">
+          <aside class="ticket ticket--indigo ticket--sm" data-parallax="0.05" aria-hidden="true">
+            <div class="ticket__in">
+              <div class="ticket__ph"><img src="assets/photos/zurich-lake.jpg" alt="" loading="lazy" decoding="async"></div>
+              <div class="ticket__body">
+                <span class="ticket__meta">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="16" rx="3"/><path d="M3.5 10h17M8 2.5V6M16 2.5V6"/></svg>
+                  Thu 23 Jul, 19:45
+                </span>
+                <strong class="ticket__title">Sunset photo walk</strong>
+                <span class="ticket__meta">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9.5" rx="2.5"/><path d="M8.5 11V7.5a3.5 3.5 0 0 1 6.8-1.2"/></svg>
+                  Open event
+                </span>
+                <span class="ticket__att">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M4 19c.5-2.8 2.5-4.5 5-4.5s4.5 1.7 5 4.5"/><path d="M15.5 5.6a3 3 0 0 1 0 5M16.6 14.8c2 .4 3.2 1.9 3.6 4"/></svg>
+                  12
+                </span>
+              </div>
+              <span class="ticket__stub">Admit all</span>
             </div>
-            <figcaption>Somewhere in Zürich</figcaption>
-          </figure>
+          </aside>
         </figure>
       </div>
 
@@ -286,21 +314,35 @@
           <ul class="ticks">
             <li>One-tap RSVP &amp; guest lists</li>
             <li>Open or approval-only events</li>
-            <li>Beautiful, colour-coded cards</li>
+            <li>Beautiful, color-coded cards</li>
           </ul>
         </div>
         <figure class="feature__media">
           <span class="blob" style="--c:var(--orange-soft)"></span>
           <div class="phone reveal" data-reveal>
-            <img src="HandyBilder/web/hosted-events.png" alt="Your hosted events — colourful event cards" loading="lazy" decoding="async">
+            <img src="HandyBilder/web/hosted-events.png" alt="Your hosted events — colorful event cards" loading="lazy" decoding="async">
           </div>
-          <figure class="polaroid polaroid--br" style="--rot:7deg" data-parallax="0.07">
-            <span class="polaroid__tape"></span>
-            <div class="polaroid__ph" style="--tint:rgba(232,100,30,.3)">
-              <img src="assets/photos/open-air-concert.jpg" alt="Crowd at a small concert" loading="lazy" decoding="async">
+          <aside class="ticket ticket--yellow ticket--sm" data-parallax="0.06" aria-hidden="true">
+            <div class="ticket__in">
+              <div class="ticket__ph"><img src="assets/photos/lake-sup.jpg" alt="" loading="lazy" decoding="async"></div>
+              <div class="ticket__body">
+                <span class="ticket__meta">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="16" rx="3"/><path d="M3.5 10h17M8 2.5V6M16 2.5V6"/></svg>
+                  Sat 25 Jul, 06:30
+                </span>
+                <strong class="ticket__title">Lake SUP sunrise</strong>
+                <span class="ticket__meta">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9.5" rx="2.5"/><path d="M8.5 11V7.5a3.5 3.5 0 0 1 6.8-1.2"/></svg>
+                  Open event
+                </span>
+                <span class="ticket__att">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M4 19c.5-2.8 2.5-4.5 5-4.5s4.5 1.7 5 4.5"/><path d="M15.5 5.6a3 3 0 0 1 0 5M16.6 14.8c2 .4 3.2 1.9 3.6 4"/></svg>
+                  8
+                </span>
+              </div>
+              <span class="ticket__stub">Admit all</span>
             </div>
-            <figcaption>Open-air night 🎶</figcaption>
-          </figure>
+          </aside>
         </figure>
       </div>
 
@@ -321,13 +363,27 @@
           <div class="phone reveal" data-reveal>
             <img src="HandyBilder/web/clubs.png" alt="Recommended clubs to join" loading="lazy" decoding="async">
           </div>
-          <figure class="polaroid polaroid--bl" style="--rot:-7deg" data-parallax="0.06">
-            <span class="polaroid__tape"></span>
-            <div class="polaroid__ph" style="--tint:rgba(47,143,91,.3)">
-              <img src="assets/photos/book-club.jpg" alt="Stacks of books at a book club" loading="lazy" decoding="async">
+          <aside class="ticket ticket--green ticket--sm" data-parallax="0.05" aria-hidden="true">
+            <div class="ticket__in">
+              <div class="ticket__ph"><img src="assets/photos/book-club.jpg" alt="" loading="lazy" decoding="async"></div>
+              <div class="ticket__body">
+                <span class="ticket__meta">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="16" rx="3"/><path d="M3.5 10h17M8 2.5V6M16 2.5V6"/></svg>
+                  Sun 26 Jul, 10:00
+                </span>
+                <strong class="ticket__title">Silent book club</strong>
+                <span class="ticket__meta">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9.5" rx="2.5"/><path d="M8.5 11V7.5a3.5 3.5 0 0 1 6.8-1.2"/></svg>
+                  Open event
+                </span>
+                <span class="ticket__att">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M4 19c.5-2.8 2.5-4.5 5-4.5s4.5 1.7 5 4.5"/><path d="M15.5 5.6a3 3 0 0 1 0 5M16.6 14.8c2 .4 3.2 1.9 3.6 4"/></svg>
+                  9
+                </span>
+              </div>
+              <span class="ticket__stub">Admit all</span>
             </div>
-            <figcaption>Book club, ch. 4</figcaption>
-          </figure>
+          </aside>
         </figure>
       </div>
 
@@ -348,7 +404,7 @@
           <div class="phone reveal" data-reveal>
             <img src="HandyBilder/web/social-feed.png" alt="Social feed with posts from your clubs" loading="lazy" decoding="async">
           </div>
-          <figure class="polaroid polaroid--br" style="--rot:8deg" data-parallax="0.07">
+          <figure class="polaroid polaroid--bl" style="--rot:-8deg" data-parallax="0.07">
             <span class="polaroid__tape"></span>
             <div class="polaroid__ph" style="--tint:rgba(106,52,214,.28)">
               <img src="assets/photos/friends-table.jpg" alt="Friends laughing around a table" loading="lazy" decoding="async">
@@ -377,6 +433,27 @@
       </div>
       <figcaption>Sunrise yoga</figcaption>
     </figure>
+    <aside class="ticket ticket--teal" data-parallax="0.05" aria-hidden="true">
+      <div class="ticket__in">
+        <div class="ticket__ph"><img src="assets/photos/boulder-session.jpg" alt="" loading="lazy" decoding="async"></div>
+        <div class="ticket__body">
+          <span class="ticket__meta">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="16" rx="3"/><path d="M3.5 10h17M8 2.5V6M16 2.5V6"/></svg>
+            Wed 29 Jul, 18:30
+          </span>
+          <strong class="ticket__title">Boulder &amp; beers</strong>
+          <span class="ticket__meta">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9.5" rx="2.5"/><path d="M8.5 11V7.5a3.5 3.5 0 0 1 6.8-1.2"/></svg>
+            Open event
+          </span>
+          <span class="ticket__att">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M4 19c.5-2.8 2.5-4.5 5-4.5s4.5 1.7 5 4.5"/><path d="M15.5 5.6a3 3 0 0 1 0 5M16.6 14.8c2 .4 3.2 1.9 3.6 4"/></svg>
+            11
+          </span>
+        </div>
+        <span class="ticket__stub">Admit all</span>
+      </div>
+    </aside>
     <div class="container">
       <header class="section-head center reveal" data-reveal>
         <span class="eyebrow">Whatever you're into</span>
@@ -485,17 +562,17 @@
       <div class="community__cards reveal" data-reveal>
         <article class="ecard c-orange">
           <div class="ecard__ph">
-            <img src="assets/photos/mountain-run.jpg" alt="Trail runner in the mountains at sunset" loading="lazy" decoding="async">
+            <img src="assets/photos/mountain-run.jpg" alt="Runner sprinting up concrete steps" loading="lazy" decoding="async">
           </div>
-          <div class="ecard__meta">Wed 01 Nov · 14:00</div>
-          <h3 class="ecard__title">Mountain running</h3>
+          <div class="ecard__meta">Sun 01 Nov · 14:00</div>
+          <h3 class="ecard__title">City stair sprints</h3>
           <span class="ecard__att">👥 17 going</span>
         </article>
         <article class="ecard c-blue">
           <div class="ecard__ph ecard__ph--light">
-            <img src="assets/photos/park-run.jpg" alt="Runner warming up in the park" loading="lazy" decoding="async">
+            <img src="assets/photos/park-run.jpg" alt="Three runners on an easy morning run" loading="lazy" decoding="async">
           </div>
-          <div class="ecard__meta">Mon 15 Sep · 09:30</div>
+          <div class="ecard__meta">Tue 15 Sep · 09:30</div>
           <h3 class="ecard__title">Easy pace park run</h3>
           <span class="ecard__att">👥 25 going</span>
         </article>
@@ -503,8 +580,8 @@
           <div class="ecard__ph">
             <img src="assets/photos/cheese-tour.jpg" alt="Shared table full of good food" loading="lazy" decoding="async">
           </div>
-          <div class="ecard__meta">Tue 22 Oct · 13:30</div>
-          <h3 class="ecard__title">Artisanal cheese tour</h3>
+          <div class="ecard__meta">Thu 22 Oct · 13:30</div>
+          <h3 class="ecard__title">Farm-to-table lunch</h3>
           <span class="ecard__att">👥 10/18 going</span>
         </article>
       </div>

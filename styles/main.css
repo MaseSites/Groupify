@@ -89,6 +89,10 @@
 .ticks li::before{content:"";position:absolute;left:0;top:1px;width:22px;height:22px;border-radius:50%;background:var(--primary-soft);
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%233a34d6' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center}
 .feature__media{position:relative;display:flex;justify-content:center;align-items:center;min-height:420px}
+/* nudge the phone toward the text column so the corner tickets get room
+   on the outer side instead of lying across the screen */
+.feature:not(.feature--reverse) .feature__media .phone{margin-right:64px}
+.feature--reverse .feature__media .phone{margin-left:64px}
 .blob{position:absolute;width:78%;aspect-ratio:1;border-radius:42% 58% 55% 45%/48% 42% 58% 52%;background:var(--c);filter:blur(6px);opacity:.9;z-index:0}
 .feature__media .phone{position:relative;z-index:1;width:270px}
 
@@ -196,6 +200,72 @@
 .c-orange{background:var(--orange);color:#2a1405}
 .c-blue{background:var(--blue-soft);color:var(--ink)}
 .c-yellow{background:var(--yellow);color:#3a3208}
+
+/* ==========================================================================
+   Event tickets — app-style ticket cards scattered through the page.
+   The two punched notches are real transparent holes (CSS mask, two
+   half-height layers so their union keeps both holes), which is why the
+   drop shadow lives on the OUTER element: filter follows the masked
+   silhouette, box-shadow would be clipped away.
+   ========================================================================== */
+.ticket{position:relative;width:290px;z-index:2;
+  filter:drop-shadow(0 16px 26px rgba(20,22,58,.32));
+  transform:rotate(var(--rot,0deg)) translateY(var(--py,0))}
+.ticket__in{--nx:calc(100% - 46px);position:relative;display:flex;gap:.85rem;align-items:stretch;
+  padding:10px 46px 10px 10px;border-radius:16px;
+  background:var(--tk-bg,var(--orange));color:var(--tk-ink,var(--ink));
+  -webkit-mask:
+    radial-gradient(circle 9px at var(--nx) 0,transparent 8.5px,#000 9px) top/100% 51% no-repeat,
+    radial-gradient(circle 9px at var(--nx) 100%,transparent 8.5px,#000 9px) bottom/100% 51% no-repeat;
+  mask:
+    radial-gradient(circle 9px at var(--nx) 0,transparent 8.5px,#000 9px) top/100% 51% no-repeat,
+    radial-gradient(circle 9px at var(--nx) 100%,transparent 8.5px,#000 9px) bottom/100% 51% no-repeat}
+.ticket__ph{flex:0 0 92px;border-radius:11px;overflow:hidden;background:rgba(255,255,255,.3)}
+.ticket__ph img{width:100%;height:100%;object-fit:cover;filter:saturate(.92) contrast(1.06)}
+.ticket__body{display:flex;flex-direction:column;justify-content:center;gap:.32rem;
+  padding:.3rem 0;min-height:104px}
+.ticket__meta{display:flex;align-items:center;gap:.45em;font-size:.72rem;font-weight:600}
+.ticket__meta svg,.ticket__att svg{width:14px;height:14px;flex:0 0 auto;fill:none;
+  stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ticket__title{font-family:var(--font-sans);font-size:1.02rem;font-weight:800;line-height:1.05;
+  text-transform:uppercase;letter-spacing:.015em}
+.ticket__att{display:inline-flex;align-items:center;gap:.4em;align-self:flex-start;margin-top:.12rem;
+  padding:.22em .68em;border-radius:var(--r-pill);
+  background:var(--tk-pill,rgba(255,255,255,.55));font-size:.78rem;font-weight:700}
+.ticket__stub{position:absolute;right:0;top:0;bottom:0;width:46px;display:grid;place-items:center;
+  writing-mode:vertical-rl;font-size:.56rem;font-weight:800;letter-spacing:.34em;
+  text-transform:uppercase;opacity:.6}
+.ticket__stub::before{content:"";position:absolute;left:0;top:14px;bottom:14px;
+  border-left:2px dashed var(--tk-line,rgba(20,22,58,.34))}
+
+/* colour ways (category palette) */
+.ticket--yellow{--tk-bg:var(--yellow)}
+.ticket--teal{--tk-bg:var(--teal);--tk-pill:rgba(255,255,255,.72)}
+.ticket--red{--tk-bg:var(--red);--tk-ink:#fff6ee;--tk-line:rgba(255,246,238,.44);--tk-pill:rgba(255,255,255,.22)}
+.ticket--indigo{--tk-bg:var(--primary);--tk-ink:#f1f0ff;--tk-line:rgba(241,240,255,.42);--tk-pill:rgba(255,255,255,.2)}
+.ticket--green{--tk-bg:var(--green);--tk-ink:#eefaf2;--tk-line:rgba(238,250,242,.42);--tk-pill:rgba(255,255,255,.22)}
+
+/* compact ticket — used next to phone mockups so it only ever kisses the
+   device corner instead of lying across the screen */
+.ticket--sm{width:236px}
+.ticket--sm .ticket__in{--nx:calc(100% - 38px);padding:8px 38px 8px 8px;gap:.6rem;border-radius:14px}
+.ticket--sm .ticket__ph{flex:0 0 66px}
+.ticket--sm .ticket__body{min-height:84px;gap:.22rem;padding:.2rem 0}
+.ticket--sm .ticket__meta{font-size:.62rem}
+.ticket--sm .ticket__meta svg,.ticket--sm .ticket__att svg{width:11px;height:11px}
+.ticket--sm .ticket__title{font-size:.84rem}
+.ticket--sm .ticket__att{font-size:.66rem;padding:.18em .6em}
+.ticket--sm .ticket__stub{width:38px;font-size:.48rem;letter-spacing:.28em}
+.ticket--sm .ticket__stub::before{top:11px;bottom:11px}
+
+/* placements (decorative — hidden on small screens with the polaroids).
+   Feature tickets sit at the OUTER bottom corner beside the phone so they
+   never cover the app screen: media is right column on normal features,
+   left column on --reverse ones. */
+.hero__visual .ticket{position:absolute;left:-5%;bottom:-3%;z-index:4;--rot:-6deg}
+.feature__media .ticket{position:absolute;left:-4%;bottom:-6%;z-index:2;--rot:-5deg}
+.feature:not(.feature--reverse) .feature__media .ticket{left:auto;right:-4%;--rot:5deg}
+.categories .ticket{position:absolute;left:26px;top:44px;z-index:0;--rot:-5deg}
 
 /* ==========================================================================
    About — Swiss made (cream, paper-note trust cards)
@@ -307,6 +377,7 @@
   .footer-inner{grid-template-columns:1fr}
   .steps{gap:1rem}
   .trust{grid-template-columns:1fr 1fr;gap:1.1rem}
+  .hero__visual .ticket,.feature__media .ticket,.categories .ticket{display:none}
 }
 @media (max-width:560px){
   .header-actions .btn{display:none}
