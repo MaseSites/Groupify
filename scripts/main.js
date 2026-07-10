@@ -29,6 +29,12 @@
     try { sessionStorage.setItem(INTRO_KEY, "1"); } catch (e) { /* private mode */ }
   }
 
+  function opensDirectSection() {
+    var hash = window.location.hash;
+    if (!hash || /^#introfreeze=/.test(hash)) return false;
+    try { return !!document.querySelector(hash); } catch (e) { return true; }
+  }
+
   /* if the intro bootstrap itself throws (a browser quirk, a missing
      API), don't leave the page stuck behind the curtain — drop the
      overlay and hand straight off to the site */
@@ -36,7 +42,7 @@
     try { runIntro(); } catch (e) { if (intro) intro.remove(); introDone(); }
   }
 
-  if (!intro || reduced || seenThisSession()) {
+  if (!intro || reduced || seenThisSession() || opensDirectSection()) {
     if (intro) intro.remove();
     introDone();
   } else if (document.hidden) {

@@ -25,8 +25,9 @@
 <link rel="preload" href="assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/fonts/fonts.css?v=secure-20260706">
 <link rel="stylesheet" href="styles/theme.css">
-<link rel="stylesheet" href="styles/main.css?v=polish-20260707">
+<link rel="stylesheet" href="styles/main.css?v=spacing-20260710c">
 <link rel="stylesheet" href="styles/cinema.css?v=polish-20260707">
+<link rel="stylesheet" href="styles/app-demo.css?v=live-preview-20260710e">
 </head>
 <body>
 
@@ -165,6 +166,7 @@
     </a>
     <nav class="main-nav" id="menu" aria-label="Primary">
       <a href="#features">Features</a>
+      <a href="#app-preview">Preview</a>
       <a href="#clubs">Clubs</a>
       <a href="#how">How it works</a>
       <a href="#categories">Categories</a>
@@ -265,7 +267,6 @@
       <!-- Feature 1: Events -->
       <div class="feature reveal" data-reveal>
         <div class="feature__text">
-          <span class="pill-tag" style="--c:var(--orange);--bg:var(--orange-soft)">Events</span>
           <h3>Host or join, effortlessly</h3>
           <p>Create an event in seconds, manage guests, and approve requests. Keep it open, invite-only or paid — from a free park run to a CHF 5 grill &amp; chill or a private poker night.</p>
           <ul class="ticks">
@@ -306,7 +307,6 @@
       <!-- Feature 2: Clubs -->
       <div class="feature feature--reverse reveal" data-reveal>
         <div class="feature__text">
-          <span class="pill-tag" style="--c:var(--green);--bg:var(--green-soft)">Clubs</span>
           <h3>Find your club</h3>
           <p>Join clubs built around your interests and keep the momentum going between events. Runners, readers, makers — there's a group for you.</p>
           <ul class="ticks">
@@ -347,7 +347,6 @@
       <!-- Feature 3: Chat (feed, group chats & Groupify AI) -->
       <div class="feature reveal" data-reveal>
         <div class="feature__text">
-          <span class="pill-tag" style="--c:var(--purple);--bg:var(--purple-soft)">Chat</span>
           <h3>Stay in the loop</h3>
           <p>A social feed for your clubs and events, plus group chats to plan the details — and <strong>Groupify AI</strong>, your in-app assistant for plan ideas, icebreakers and what to do next.</p>
           <ul class="ticks">
@@ -374,7 +373,6 @@
       <!-- Feature 4: Map / Discover -->
       <div class="feature feature--reverse reveal" data-reveal>
         <div class="feature__text">
-          <span class="pill-tag" style="--c:var(--primary);--bg:var(--primary-soft)">Map</span>
           <h3>Your city, on a map</h3>
           <p>Browse a real-time map of events and clubs near you. Tap a pin to preview what's on — cooking classes, hikes, game nights and more.</p>
           <ul class="ticks">
@@ -414,8 +412,42 @@
     </div>
   </section>
 
+  <!-- ===================== APP PREVIEW (interactive demo) ===================== -->
+  <div class="tear tear--white-on-preview" aria-hidden="true"></div>
+  <section class="app-preview" id="app-preview">
+      <div class="container app-preview__inner">
+      <div class="app-preview__copy reveal" data-reveal>
+        <h2 class="app-preview__title">Tap through the real <em>Groupify app</em></h2>
+        <p class="app-preview__lead">A live rebuild of the mobile experience: sign up, discover events, join clubs, browse the feed, and move through the app like it is already in your hand.</p>
+        <ul class="app-preview__benefits">
+          <li>Sign up and onboarding flow</li>
+          <li>Discover map, home, clubs and events</li>
+          <li>Feed, chats, profile and settings</li>
+        </ul>
+        <div class="app-preview__cta">
+          <button type="button" class="btn btn--primary btn--lg" data-demo-try>Try demo</button>
+          <span class="app-preview__hint">Tap buttons, tabs and nav items</span>
+        </div>
+      </div>
+
+      <div class="app-preview__stage reveal" data-reveal>
+        <div class="gd-phone" data-demo-phone>
+          <div class="gd-phone__frame">
+            <div class="gd-phone__island"></div>
+            <div class="gd-phone__screen" data-demo-screen-root>
+              <!-- Progressive-enhancement fallback - replaced by scripts/app-demo.js -->
+              <div style="height:100%;display:grid;place-items:center;padding:2rem;text-align:center;background:#fff;color:#14163a;font-family:Inter,system-ui,sans-serif">
+                <strong>Interactive Groupify preview</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== CATEGORIES ===================== -->
-  <div class="tear tear--white-on-cream" aria-hidden="true"></div>
+  <div class="tear tear--preview-on-cream" aria-hidden="true"></div>
   <section class="categories" id="categories">
     <figure class="polaroid polaroid--left" data-parallax="0.05" aria-hidden="true">
       <span class="polaroid__tape"></span>
@@ -611,7 +643,7 @@
             </svg>
           </span>
           <h3>English &amp; German</h3>
-          <p>Use Groupify in the language you feel at home in — Deutsch works too.</p>
+          <p>Groupify is currently available in German and English.</p>
         </li>
       </ul>
       <p class="about__sign reveal" data-reveal>— the Groupify crew, Zürich &amp; Basel <span class="about__tag">#findyourpeople</span></p>
@@ -755,6 +787,7 @@
 
 <script src="scripts/vendor/gsap.min.js?v=3.12.5" defer></script>
 <script src="scripts/vendor/ScrollTrigger.min.js?v=3.12.5" defer></script>
-<script src="scripts/main.js?v=everywhere-20260704" defer></script>
+<script src="scripts/main.js?v=anchor-preview-20260710a" defer></script>
+<script src="scripts/app-demo.js?v=live-preview-20260710d" defer></script>
 </body>
 </html>
