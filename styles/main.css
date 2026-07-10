@@ -135,27 +135,40 @@
 .step p{color:#4f536b;margin:0}
 
 /* ==========================================================================
-   Torn-paper seams between sections (jagged edge of the section above
-   torn over the section below; tileable 240px SVG, three paper colours)
+   Zigzag seams between sections (same sharp mask, section-specific colours)
    ========================================================================== */
-.tear{height:26px;margin-top:-1px;position:relative;z-index:5;
-  background-repeat:repeat-x;background-size:240px 26px}
-.tear--white-on-cream{background-color:var(--cream);
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='26'%3E%3Cpath fill='%23ffffff' d='M0 0h240v10l-20 6-14-9-16 8-14-6-14 9-16-10-15 8-13-5-14 9-15-7-14 5-13-8-15 10-14-6-13 7-20-11z'/%3E%3C/svg%3E")}
-.tear--cream-on-navy{background-color:var(--navy);
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='26'%3E%3Cpath fill='%23f6f1e7' d='M0 0h240v10l-20 6-14-9-16 8-14-6-14 9-16-10-15 8-13-5-14 9-15-7-14 5-13-8-15 10-14-6-13 7-20-11z'/%3E%3C/svg%3E")}
-.tear--white-on-navy{background-color:var(--navy);
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='26'%3E%3Cpath fill='%23ffffff' d='M0 0h240v10l-20 6-14-9-16 8-14-6-14 9-16-10-15 8-13-5-14 9-15-7-14 5-13-8-15 10-14-6-13 7-20-11z'/%3E%3C/svg%3E")}
-.tear--navy-on-cream{background-color:var(--cream);
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='26'%3E%3Cpath fill='%2316193b' d='M0 0h240v10l-20 6-14-9-16 8-14-6-14 9-16-10-15 8-13-5-14 9-15-7-14 5-13-8-15 10-14-6-13 7-20-11z'/%3E%3C/svg%3E")}
-.tear--white-on-preview{background-color:#f8f9fb;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='26'%3E%3Cpath fill='%23ffffff' d='M0 0h240v10l-20 6-14-9-16 8-14-6-14 9-16-10-15 8-13-5-14 9-15-7-14 5-13-8-15 10-14-6-13 7-20-11z'/%3E%3C/svg%3E")}
-.tear--preview-on-cream{background-color:var(--cream);
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='26'%3E%3Cpath fill='%23eef1f6' d='M0 0h240v10l-20 6-14-9-16 8-14-6-14 9-16-10-15 8-13-5-14 9-15-7-14 5-13-8-15 10-14-6-13 7-20-11z'/%3E%3C/svg%3E")}
-.tear--white-on-preview::after,
-.tear--preview-on-cream::after{content:"";position:absolute;left:0;right:0;bottom:-22px;height:24px;pointer-events:none;background:linear-gradient(180deg,rgba(20,22,58,.06),rgba(20,22,58,0));opacity:.38}
-.tear--cream-on-white{background-color:var(--paper);
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='26'%3E%3Cpath fill='%23f6f1e7' d='M0 0h240v10l-20 6-14-9-16 8-14-6-14 9-16-10-15 8-13-5-14 9-15-7-14 5-13-8-15 10-14-6-13 7-20-11z'/%3E%3C/svg%3E")}
+.tear{
+  --tear-above:#fff;
+  --tear-below:var(--cream);
+  --tear-navy:linear-gradient(100deg,var(--navy) 0%,#202052 66%,#34216f 100%);
+  height:34px;
+  margin-top:-1px;
+  position:relative;
+  z-index:5;
+  overflow:hidden;
+  background:var(--tear-below);
+}
+.tear::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:var(--tear-above);
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='34' viewBox='0 0 280 34'%3E%3Cpath fill='%23000' d='M0 0H280V18L266 12L252 22L238 16L224 25L210 17L196 22L182 14L168 23L154 17L140 27L126 16L112 22L98 15L84 24L70 18L56 27L42 16L28 23L14 13L0 21Z'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='34' viewBox='0 0 280 34'%3E%3Cpath fill='%23000' d='M0 0H280V18L266 12L252 22L238 16L224 25L210 17L196 22L182 14L168 23L154 17L140 27L126 16L112 22L98 15L84 24L70 18L56 27L42 16L28 23L14 13L0 21Z'/%3E%3C/svg%3E");
+  -webkit-mask-repeat:repeat-x;
+  mask-repeat:repeat-x;
+  -webkit-mask-size:280px 34px;
+  mask-size:280px 34px;
+  -webkit-mask-position:center top;
+  mask-position:center top;
+}
+.tear--white-on-cream{--tear-above:#fff;--tear-below:var(--cream)}
+.tear--cream-on-navy{--tear-above:var(--cream);--tear-below:var(--tear-navy)}
+.tear--white-on-navy{--tear-above:#fff;--tear-below:var(--tear-navy)}
+.tear--navy-on-cream{--tear-above:var(--tear-navy);--tear-below:var(--cream)}
+.tear--white-on-preview{--tear-above:#fff;--tear-below:#f8f9fb}
+.tear--preview-on-cream{--tear-above:#eef1f6;--tear-below:var(--cream)}
+.tear--cream-on-white{--tear-above:var(--cream);--tear-below:var(--paper)}
 
 /* ==========================================================================
    Story — from chat to court (scrollytelling strip)
